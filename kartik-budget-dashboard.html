@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kartik's Budget Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0d14;--bg2:#1a1a24;--bg3:#13131c;--border:#2a2a3a;
+  --accent:#f59e0b;--green:#10b981;--blue:#6366f1;--red:#ef4444;
+  --orange:#f97316;--pink:#ec4899;--teal:#14b8a6;--purple:#8b5cf6;--cyan:#06b6d4;
+  --t1:#f1f5f9;--t2:#94a3b8;--t3:#475569;--t4:#334155;
+}
+body{background:var(--bg);color:var(--t1);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh}
+h1,h2,h3{font-family:'Syne',sans-serif}
+input,select,textarea{background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--t1);padding:6px 10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+button{cursor:pointer;font-family:'DM Sans',sans-serif;border:none;border-radius:8px;transition:all .2s}
+.btn-primary{background:var(--accent);color:#0d0d14;padding:8px 16px;font-weight:600;font-size:13px}
+.btn-primary:hover{background:#d97706}
+.btn-ghost{background:transparent;color:var(--t2);padding:6px 14px;border:1px solid var(--border);font-size:13px}
+.btn-ghost:hover{background:var(--bg2);color:var(--t1)}
+.btn-danger{background:#ef444422;color:var(--red);padding:4px 10px;font-size:12px;border:1px solid #ef444433}
+.btn-danger:hover{background:#ef444433}
+
+/* HEADER */
+#header{background:linear-gradient(135deg,#1a1a2e,#16213e);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:100}
+#header h1{font-size:20px;color:var(--accent)}
+#header .sub{font-size:11px;color:var(--t3);margin-top:2px}
+.save-badge{font-size:11px;padding:3px 10px;border-radius:12px;background:#10b98122;color:var(--green);border:1px solid #10b98133}
+
+/* NAV */
+#nav{display:flex;gap:6px;background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 24px;overflow-x:auto}
+.nav-btn{padding:7px 16px;border-radius:8px;border:none;background:transparent;color:var(--t2);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s}
+.nav-btn.active{background:var(--accent);color:#0d0d14;font-weight:600}
+.nav-btn:hover:not(.active){background:var(--bg3);color:var(--t1)}
+
+/* SETTINGS BAR */
+#settings-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end}
+.setting-field{display:flex;flex-direction:column;gap:3px}
+.setting-field label{font-size:10px;color:var(--t3)}
+.setting-field input{width:110px}
+.avail-save{margin-left:auto;text-align:right}
+.avail-save .label{font-size:11px;color:var(--t3)}
+.avail-save .val{font-size:24px;font-weight:700;font-family:'Syne',sans-serif;color:var(--green)}
+
+/* TABS */
+.tab{display:none}
+.tab.active{display:block}
+
+/* MAIN */
+#main{padding:20px 24px;max-width:1200px;margin:0 auto}
+
+/* CARDS GRID */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;border-left-width:3px}
+.stat-card .icon{font-size:18px;margin-bottom:6px}
+.stat-card .label{font-size:10px;color:var(--t3);margin-bottom:4px}
+.stat-card .value{font-size:20px;font-weight:700;font-family:'Syne',sans-serif}
+.stat-card .sub{font-size:10px;color:var(--t3);margin-top:4px}
+
+/* GRID 2 COL */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}}
+
+/* PANEL */
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:16px}
+.panel-title{font-family:'Syne',sans-serif;font-size:14px;color:var(--t1);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+
+/* PROGRESS BAR */
+.progress-wrap{background:var(--bg3);border-radius:4px;height:7px;overflow:hidden;margin:4px 0}
+.progress-fill{height:100%;border-radius:4px;transition:width .5s ease}
+
+/* GOAL CARD */
+.goal-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;transition:border .2s}
+.goal-card:hover{border-color:var(--t4)}
+.goal-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.goal-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:700}
+.goal-meta{font-size:10px;color:var(--t3);margin-top:2px}
+.goal-note{font-size:11px;color:var(--t2);margin-bottom:8px;line-height:1.5}
+.goal-amounts{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px}
+.goal-amt-block{text-align:center}
+.goal-amt-block .alabel{font-size:9px;color:var(--t3)}
+.goal-amt-block .aval{font-size:13px;font-weight:600;font-family:'Syne',sans-serif}
+.goal-inputs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:flex-end}
+.goal-inputs .fi{display:flex;flex-direction:column;gap:2px}
+.goal-inputs .fi label{font-size:9px;color:var(--t3)}
+.goal-inputs input{width:90px;font-size:12px}
+
+/* HOUSE BREAKDOWN */
+.house-box{background:linear-gradient(135deg,#1a1208,var(--bg2));border:1px solid #f59e0b44;border-radius:12px;padding:18px;margin-bottom:16px}
+.house-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:12px}
+.house-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px}
+.house-item.highlight{background:#2a1f0a;border-color:#f59e0b88}
+.house-item .hl{font-size:9px;color:var(--t3);margin-bottom:3px}
+.house-item .hv{font-size:15px;font-weight:700;font-family:'Syne',sans-serif}
+.house-item .hs{font-size:9px;color:var(--t3);margin-top:2px}
+
+/* LOG TABLE */
+.log-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+.log-table th{text-align:left;padding:6px 8px;color:var(--t3);font-weight:500;border-bottom:1px solid var(--border)}
+.log-table td{padding:6px 8px;border-bottom:1px solid #1e2433;color:var(--t2)}
+.log-table tr:hover td{background:var(--bg3)}
+
+/* TIPS */
+.tip-phase{border-radius:12px;padding:16px;margin-bottom:14px}
+.tip-item{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px}
+.tip-dot{width:6px;height:6px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.tip-text{font-size:12px;color:#cbd5e1;line-height:1.6}
+
+/* BADGE */
+.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500}
+.badge-green{background:#10b98122;color:var(--green);border:1px solid #10b98133}
+.badge-amber{background:#f59e0b22;color:var(--accent);border:1px solid #f59e0b33}
+.badge-red{background:#ef444422;color:var(--red);border:1px solid #ef444433}
+.badge-blue{background:#6366f122;color:var(--blue);border:1px solid #6366f133}
+
+/* NOTES */
+.note-item{display:flex;justify-content:space-between;align-items:flex-start;background:var(--bg3);border-radius:6px;padding:8px 10px;margin-bottom:6px;font-size:12px;gap:8px}
+.note-item .ntxt{color:var(--t1);flex:1;line-height:1.5}
+.note-item .ndate{color:var(--t3);font-size:10px;flex-shrink:0}
+
+/* PHASE PLAN */
+.phase-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #1e2433}
+.phase-row:last-child{border-bottom:none}
+.phase-row .pname{font-size:12px;color:var(--t1)}
+.phase-row .pnote{font-size:10px;color:var(--t3)}
+.phase-row .pamt{font-size:13px;font-weight:600}
+
+/* MODAL */
+#modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center}
+#modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;width:90%;max-width:480px;max-height:85vh;overflow-y:auto}
+.modal h2{font-size:16px;margin-bottom:16px;color:var(--accent)}
+
+/* CHART WRAPPER */
+.chart-wrap{position:relative;width:100%;height:220px}
+.chart-wrap-sm{position:relative;width:100%;height:180px}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg3)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div>
+    <h1>Kartik's Budget Dashboard</h1>
+    <div class="sub" id="header-date"></div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <span class="save-badge" id="save-badge">● All saved</span>
+    <button class="btn-ghost" onclick="openModal()">⚙ Settings</button>
+    <button class="btn-primary" onclick="saveAll()">Save Data</button>
+  </div>
+</div>
+
+<div id="nav">
+  <button class="nav-btn active" onclick="switchTab('overview')">📊 Overview</button>
+  <button class="nav-btn" onclick="switchTab('goals')">🎯 Goals</button>
+  <button class="nav-btn" onclick="switchTab('monthly')">📅 Monthly Log</button>
+  <button class="nav-btn" onclick="switchTab('tips')">💡 Tips & Plan</button>
+</div>
+
+<div id="settings-bar">
+  <div class="setting-field">
+    <label>Monthly CTC (₹)</label>
+    <input type="number" id="s-ctc" value="50000" onchange="recalc()">
+  </div>
+  <div class="setting-field">
+    <label>Take-home % of CTC</label>
+    <input type="number" id="s-th" value="80" min="50" max="100" onchange="recalc()">
+  </div>
+  <div class="setting-field">
+    <label>Monthly Expenses (₹)</label>
+    <input type="number" id="s-exp" value="10000" onchange="recalc()">
+  </div>
+  <div class="setting-field">
+    <label>Cash + FD Savings (₹)</label>
+    <input type="number" id="s-cash" value="73000" onchange="recalc()">
+  </div>
+  <div class="setting-field">
+    <label>Mutual Funds (₹)</label>
+    <input type="number" id="s-mf" value="77000" onchange="recalc()">
+  </div>
+  <div class="avail-save">
+    <div class="label">Available to save/month</div>
+    <div class="val" id="avail-disp">₹0</div>
+  </div>
+</div>
+
+<!-- ===== OVERVIEW TAB ===== -->
+<div id="tab-overview" class="tab active">
+<div id="main">
+
+  <div class="cards-grid" id="summary-cards"></div>
+
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-title">🎯 Priority Goals — Progress</div>
+      <div id="priority-goals-list"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">📊 Monthly Allocation Needed</div>
+      <div style="font-size:11px;color:var(--t3);margin-bottom:8px">Ideal split of savings across top goals</div>
+      <div class="chart-wrap"><canvas id="pieChart" role="img" aria-label="Pie chart showing monthly savings allocation across goals">Monthly savings allocation</canvas></div>
+      <div id="pie-legend" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">📅 Goal Timeline (years to achieve)</div>
+    <div class="chart-wrap"><canvas id="timelineChart" role="img" aria-label="Bar chart showing years remaining to achieve each goal">Goal timelines</canvas></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">💰 Savings Growth Projection</div>
+    <div style="font-size:11px;color:var(--t3);margin-bottom:8px">If you save ₹30k/month with 10% annual returns</div>
+    <div class="chart-wrap"><canvas id="projChart" role="img" aria-label="Line chart showing savings projection over 10 years">Savings projection</canvas></div>
+  </div>
+
+</div>
+</div>
+
+<!-- ===== GOALS TAB ===== -->
+<div id="tab-goals" class="tab">
+<div id="main">
+
+  <!-- House Breakdown -->
+  <div class="house-box">
+    <div style="font-family:'Syne',sans-serif;font-size:15px;color:var(--accent);margin-bottom:4px">🏠 House Goal — Full Breakdown</div>
+    <div style="font-size:11px;color:var(--t3)">Good 2BHK in Bangalore (Whitefield / HSR / Sarjapur). Today's price: <b style="color:var(--t2)">~₹75L</b>. Inflation: 8%/yr</div>
+    <div class="house-grid" id="house-breakdown"></div>
+  </div>
+
+  <!-- All Goals -->
+  <div style="font-size:12px;color:var(--t3);margin-bottom:12px">Edit saved amounts & timelines below. Changes auto-recalculate. Hit <b style="color:var(--t1)">Save Data</b> to persist.</div>
+  <div id="all-goals-list"></div>
+
+  <!-- Recurring commitments -->
+  <div style="font-family:'Syne',sans-serif;font-size:14px;color:var(--t1);margin:20px 0 10px">🔄 Recurring Monthly Commitments (start Year 3)</div>
+  <div class="grid2" id="recurring-list"></div>
+
+</div>
+</div>
+
+<!-- ===== MONTHLY TAB ===== -->
+<div id="tab-monthly" class="tab">
+<div id="main">
+  <div class="grid2">
+    <!-- Add Entry -->
+    <div>
+      <div class="panel">
+        <div class="panel-title">➕ Log This Month</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div><label style="font-size:11px;color:var(--t3);display:block;margin-bottom:3px">Month & Year</label>
+            <input type="text" id="log-month" placeholder="e.g. June 2025" style="width:100%"></div>
+          <div><label style="font-size:11px;color:var(--t3);display:block;margin-bottom:3px">Income received (₹)</label>
+            <input type="number" id="log-income" placeholder="Take-home this month" style="width:100%"></div>
+          <div><label style="font-size:11px;color:var(--t3);display:block;margin-bottom:3px">Amount saved (₹)</label>
+            <input type="number" id="log-saved" placeholder="Total saved this month" style="width:100%"></div>
+          <div><label style="font-size:11px;color:var(--t3);display:block;margin-bottom:3px">Where did you save it?</label>
+            <input type="text" id="log-where" placeholder="e.g. FD ₹10k, SIP ₹5k" style="width:100%"></div>
+          <div><label style="font-size:11px;color:var(--t3);display:block;margin-bottom:3px">Notes</label>
+            <input type="text" id="log-note" placeholder="Any note for this month" style="width:100%"></div>
+          <button class="btn-primary" onclick="addLog()" style="margin-top:4px">+ Log Month</button>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="panel">
+        <div class="panel-title">📌 Quick Notes</div>
+        <div style="display:flex;gap:8px;margin-bottom:10px">
+          <input type="text" id="note-input" placeholder="Add a note or reminder..." style="flex:1" onkeydown="if(event.key==='Enter')addNote()">
+          <button class="btn-primary" onclick="addNote()">+</button>
+        </div>
+        <div id="notes-list"></div>
+      </div>
+    </div>
+
+    <!-- Monthly chart + log -->
+    <div>
+      <div class="panel">
+        <div class="panel-title">📈 Monthly Savings Progress</div>
+        <div class="chart-wrap-sm"><canvas id="monthlyChart" role="img" aria-label="Bar chart of monthly savings">Monthly savings</canvas></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">📋 Savings Log</div>
+        <div id="log-summary" style="display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap"></div>
+        <table class="log-table" id="log-table">
+          <thead><tr><th>Month</th><th>Income</th><th>Saved</th><th>Rate</th><th>Where</th><th>Note</th><th></th></tr></thead>
+          <tbody id="log-tbody"></tbody>
+        </table>
+        <div id="log-empty" style="color:var(--t3);font-size:12px;text-align:center;padding:20px">No entries yet. Start logging to track your progress!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase Allocation Plan -->
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-title">⚡ Phase 1 Allocation (Year 0–2)</div>
+      <div style="font-size:11px;color:var(--t3);margin-bottom:12px">Salary ~₹40–52k take-home | Available: ~₹30–40k/month</div>
+      <div id="phase1-plan"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">📈 Phase 2 Allocation (Year 3–6)</div>
+      <div style="font-size:11px;color:var(--t3);margin-bottom:12px">Salary ~₹55–70k take-home | Available: ~₹40–55k/month</div>
+      <div id="phase2-plan"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== TIPS TAB ===== -->
+<div id="tab-tips" class="tab">
+<div id="main">
+
+  <!-- Financial Snapshot -->
+  <div class="panel" id="snapshot-panel"></div>
+
+  <!-- Phase Tips -->
+  <div id="tips-sections"></div>
+
+  <!-- Investment Vehicles -->
+  <div class="panel">
+    <div class="panel-title">🏦 Where to Park Your Money</div>
+    <div id="invest-table"></div>
+  </div>
+
+  <!-- Tax Saving -->
+  <div class="panel">
+    <div class="panel-title">🧾 Tax Saving Tips (India)</div>
+    <div id="tax-tips"></div>
+  </div>
+
+</div>
+</div>
+
+<!-- ===== SETTINGS MODAL ===== -->
+<div id="modal-overlay">
+  <div class="modal">
+    <h2>⚙ Settings & Assumptions</h2>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div>
+        <label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">Your name (optional)</label>
+        <input type="text" id="m-name" value="Kartik" style="width:100%">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">General inflation rate (%/year)</label>
+        <input type="number" id="m-inf-gen" value="6" style="width:100%">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">Real estate inflation rate (%/year)</label>
+        <input type="number" id="m-inf-re" value="8" style="width:100%">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">Medical inflation rate (%/year)</label>
+        <input type="number" id="m-inf-med" value="7" style="width:100%">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">Expected SIP returns (%/year)</label>
+        <input type="number" id="m-sip-ret" value="10" style="width:100%">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">House property price today (₹)</label>
+        <input type="number" id="m-house-price" value="7500000" style="width:100%">
+        <div style="font-size:10px;color:var(--t3);margin-top:3px">Good 2BHK in Bangalore today = ₹75L</div>
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">Furnishing budget today (₹)</label>
+        <input type="number" id="m-furnish" value="800000" style="width:100%">
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn-primary" onclick="applySettings()">Apply & Close</button>
+        <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================
+// DATA & STATE
+// ============================
+const APP_KEY = 'kartik_budget_v1';
+
+const defaultState = {
+  ctc: 50000, takeHomePct: 80, expenses: 10000,
+  cashSavings: 73000, mutualFunds: 77000,
+  infGen: 6, infRE: 8, infMed: 7, sipRet: 10,
+  housePrice: 7500000, furnishing: 800000,
+  goals: [
+    {id:1,icon:'🏠',name:'House Down Payment',cat:'Housing',color:'#f59e0b',
+     todayVal:0,inflRate:8,years:6.5,saved:0,priority:1,
+     note:'20% down + 6.5% stamp/reg + furnishing. Full property ~₹75L Bangalore. Take home loan for the rest.',
+     isHouse:true},
+    {id:2,icon:'💳',name:'Family Debts',cat:'Debt',color:'#ef4444',
+     todayVal:600000,inflRate:0,years:4.5,saved:0,priority:2,
+     note:'₹5–7L owed to family & others. No inflation — clear ASAP to free up cash flow.'},
+    {id:3,icon:'🖥️',name:'Workstation Setup',cat:'Tech',color:'#6366f1',
+     todayVal:48000,inflRate:5,years:1,saved:0,priority:3,
+     note:'Sit-stand desk ₹20k + mech keyboard ₹5k + mouse ₹3k + monitor ₹15k + accessories ₹5k'},
+    {id:4,icon:'💻',name:'Laptop',cat:'Tech',color:'#8b5cf6',
+     todayVal:42000,inflRate:3,years:2,saved:0,priority:4,
+     note:'Good performance laptop for work & personal (₹35–50k range)'},
+    {id:5,icon:'📱',name:'Smartphone',cat:'Tech',color:'#06b6d4',
+     todayVal:40000,inflRate:3,years:3,saved:0,priority:5,
+     note:'Mid-premium smartphone upgrade'},
+    {id:6,icon:'🔨',name:'Gurgaon House Renovation',cat:'Family',color:'#10b981',
+     todayVal:600000,inflRate:6,years:7.5,saved:0,priority:6,
+     note:'Full 2BHK renovation in Gurgaon. Flooring, walls, bathroom, kitchen.'},
+    {id:7,icon:'🔧',name:'Ludhiana House Renovation',cat:'Family',color:'#84cc16',
+     todayVal:600000,inflRate:6,years:8,saved:0,priority:7,
+     note:'Full 2BHK renovation in Ludhiana. Similar scope.'},
+    {id:8,icon:'🏏',name:'Sports Business Corpus',cat:'Business',color:'#f97316',
+     todayVal:3200000,inflRate:6,years:10,saved:0,priority:8,
+     note:'2 bowling machines (₹4L each) + 4 cricket nets (₹1.5L each) + snooker + TT + setup/deposit ₹15L = ₹32L today'}
+  ],
+  monthlyLog: [],
+  notes: [],
+  lastSaved: null
+};
+
+let state = loadState();
+let charts = {};
+
+function loadState(){
+  try{
+    const s = localStorage.getItem(APP_KEY);
+    if(s) return Object.assign({},defaultState,JSON.parse(s));
+  }catch(e){}
+  return JSON.parse(JSON.stringify(defaultState));
+}
+
+function saveAll(){
+  state.lastSaved = new Date().toLocaleString('en-IN');
+  localStorage.setItem(APP_KEY, JSON.stringify(state));
+  document.getElementById('save-badge').textContent = '● Saved '+state.lastSaved.slice(0,16);
+  setTimeout(()=>{document.getElementById('save-badge').textContent='● All saved'},3000);
+}
+
+// ============================
+// FORMATTING
+// ============================
+function fINR(n){
+  n=Math.round(n);
+  if(n>=10000000) return '₹'+(n/10000000).toFixed(2)+' Cr';
+  if(n>=100000) return '₹'+(n/100000).toFixed(2)+' L';
+  if(n>=1000) return '₹'+(n/1000).toFixed(1)+'k';
+  return '₹'+n.toLocaleString('en-IN');
+}
+function fINRFull(n){
+  return '₹'+Math.round(n).toLocaleString('en-IN');
+}
+function infAdj(amt,rate,years){return amt*Math.pow(1+rate/100,years);}
+function monthlyNeeded(target,years){return target/(years*12);}
+
+// ============================
+// COMPUTED VALUES
+// ============================
+function computed(){
+  const c = state;
+  const takeHome = c.ctc*(c.takeHomePct/100);
+  const avail = takeHome - c.expenses;
+  const totalCurrentSavings = c.cashSavings + c.mutualFunds;
+
+  const goals = c.goals.map(g=>{
+    let target;
+    if(g.isHouse){
+      const propFuture = infAdj(c.housePrice, c.infRE, g.years);
+      const downPayment = propFuture*0.20;
+      const stampDuty = propFuture*0.065;
+      const furnFuture = infAdj(c.furnishing, c.infGen, g.years);
+      target = downPayment + stampDuty + furnFuture;
+    } else {
+      target = infAdj(g.todayVal, g.inflRate, g.years);
+    }
+    const remaining = Math.max(0, target - g.saved);
+    const monthly = monthlyNeeded(remaining, g.years);
+    const progress = target > 0 ? Math.min(100, (g.saved/target)*100) : 0;
+    return {...g, target, remaining, monthly, progress};
+  });
+
+  // Recurring
+  const medMonthly = infAdj(75000/12, c.infMed, 3);
+  const parentsMonthly = infAdj(5000, c.infGen, 3);
+
+  // Total
+  const totalNeeded = goals.reduce((s,g)=>s+g.target,0);
+  const totalMonthlyNeeded = goals.reduce((s,g)=>s+g.monthly,0);
+
+  // House breakdown
+  const propFuture = infAdj(c.housePrice, c.infRE, 6.5);
+  const houseBreakdown = {
+    propToday: c.housePrice,
+    propFuture,
+    downPayment: propFuture*0.20,
+    stampDuty: propFuture*0.065,
+    furnToday: c.furnishing,
+    furnFuture: infAdj(c.furnishing, c.infGen, 6.5),
+    totalSavingsNeeded: propFuture*0.20 + propFuture*0.065 + infAdj(c.furnishing,c.infGen,6.5),
+    loanAmount: propFuture*0.80,
+    emi: propFuture*0.80*0.00874
+  };
+
+  return {takeHome, avail, totalCurrentSavings, goals, totalNeeded, totalMonthlyNeeded, medMonthly, parentsMonthly, houseBreakdown};
+}
+
+// ============================
+// TAB SWITCHING
+// ============================
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  event.target.classList.add('active');
+  renderTab(name);
+}
+
+// ============================
+// SETTINGS BAR
+// ============================
+function syncSettingsBar(){
+  document.getElementById('s-ctc').value = state.ctc;
+  document.getElementById('s-th').value = state.takeHomePct;
+  document.getElementById('s-exp').value = state.expenses;
+  document.getElementById('s-cash').value = state.cashSavings;
+  document.getElementById('s-mf').value = state.mutualFunds;
+}
+
+function recalc(){
+  state.ctc = +document.getElementById('s-ctc').value||0;
+  state.takeHomePct = +document.getElementById('s-th').value||80;
+  state.expenses = +document.getElementById('s-exp').value||0;
+  state.cashSavings = +document.getElementById('s-cash').value||0;
+  state.mutualFunds = +document.getElementById('s-mf').value||0;
+  const c = computed();
+  document.getElementById('avail-disp').textContent = fINR(c.avail);
+  document.getElementById('avail-disp').style.color = c.avail>0?'var(--green)':'var(--red)';
+  renderActive();
+  markUnsaved();
+}
+
+function markUnsaved(){
+  document.getElementById('save-badge').textContent = '● Unsaved changes';
+  document.getElementById('save-badge').style.color='#f59e0b';
+}
+
+// ============================
+// RENDER OVERVIEW
+// ============================
+function renderOverview(){
+  const c = computed();
+
+  // Summary cards
+  const cards = [
+    {icon:'💰',label:'Total Savings Now',val:fINR(c.totalCurrentSavings),sub:'Cash/FD + Mutual Funds',color:'var(--green)'},
+    {icon:'🎯',label:'Total Goals Target',val:fINR(c.totalNeeded),sub:'Inflation-adjusted, all goals',color:'var(--accent)'},
+    {icon:'📈',label:'Monthly Saveable',val:fINR(c.avail),sub:'Take-home minus expenses',color:'var(--blue)'},
+    {icon:'⏳',label:'Biggest Goal',val:'House DP',sub:fINR(c.goals.find(g=>g.isHouse)?.target||0)+' needed',color:'var(--orange)'},
+  ];
+  document.getElementById('summary-cards').innerHTML = cards.map(card=>`
+    <div class="stat-card" style="border-left-color:${card.color}">
+      <div class="icon">${card.icon}</div>
+      <div class="label">${card.label}</div>
+      <div class="value" style="color:${card.color}">${card.val}</div>
+      <div class="sub">${card.sub}</div>
+    </div>`).join('');
+
+  // Priority goals list
+  const sorted = [...c.goals].sort((a,b)=>a.priority-b.priority).slice(0,7);
+  document.getElementById('priority-goals-list').innerHTML = sorted.map(g=>`
+    <div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+        <span style="font-size:12px">${g.icon} ${g.name}</span>
+        <span style="font-size:11px;color:${g.color};font-weight:600">${fINR(g.target)}</span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-fill" style="width:${g.progress}%;background:${g.color}"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:2px">
+        <span style="font-size:10px;color:var(--t3)">${g.progress.toFixed(1)}% · ${g.years}yr</span>
+        <span style="font-size:10px;color:var(--t3)">${fINR(g.monthly)}/mo needed</span>
+      </div>
+    </div>`).join('');
+
+  // Pie chart
+  const topGoals = sorted.slice(0,7);
+  destroyChart('pieChart');
+  charts['pieChart'] = new Chart(document.getElementById('pieChart'),{
+    type:'doughnut',
+    data:{
+      labels: topGoals.map(g=>g.name.split(' ').slice(0,2).join(' ')),
+      datasets:[{data: topGoals.map(g=>Math.round(g.monthly)), backgroundColor: topGoals.map(g=>g.color+'cc'), borderColor: topGoals.map(g=>g.color), borderWidth:1}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>`₹${ctx.raw.toLocaleString('en-IN')}/mo`}}}}
+  });
+  document.getElementById('pie-legend').innerHTML = topGoals.map(g=>`
+    <div style="display:flex;align-items:center;gap:4px">
+      <div style="width:8px;height:8px;border-radius:2px;background:${g.color}"></div>
+      <span style="font-size:10px;color:var(--t2)">${g.name.split(' ')[0]}</span>
+    </div>`).join('');
+
+  // Timeline chart
+  const byTime = [...c.goals].sort((a,b)=>a.years-b.years);
+  destroyChart('timelineChart');
+  charts['timelineChart'] = new Chart(document.getElementById('timelineChart'),{
+    type:'bar',
+    data:{
+      labels: byTime.map(g=>g.icon+' '+g.name.split(' ').slice(0,2).join(' ')),
+      datasets:[{label:'Years',data:byTime.map(g=>g.years),backgroundColor:byTime.map(g=>g.color+'99'),borderColor:byTime.map(g=>g.color),borderWidth:1,borderRadius:4}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>`${ctx.raw} years`}}},scales:{x:{ticks:{color:'#64748b',callback:(v)=>v+'yr'},grid:{color:'#2a2a3a'}},y:{ticks:{color:'#94a3b8',font:{size:10}},grid:{display:false}}}}
+  });
+
+  // Projection chart
+  const months = Array.from({length:121},(_,i)=>i);
+  const sipRet = state.sipRet/100;
+  let corpus = state.cashSavings + state.mutualFunds;
+  const projData = months.map(m=>{
+    corpus = corpus*(1+sipRet/12) + 30000;
+    return Math.round(corpus/100000);
+  });
+  const labels = months.filter(m=>m%12===0).map(m=>m===0?'Now':`Yr ${m/12}`);
+  const projFiltered = months.filter(m=>m%12===0).map(m=>{
+    let c2 = state.cashSavings+state.mutualFunds;
+    for(let i=0;i<m;i++) c2=c2*(1+sipRet/12)+30000;
+    return Math.round(c2/100000);
+  });
+  destroyChart('projChart');
+  charts['projChart'] = new Chart(document.getElementById('projChart'),{
+    type:'line',
+    data:{labels,datasets:[{label:'Corpus (₹L)',data:projFiltered,borderColor:'#f59e0b',backgroundColor:'#f59e0b22',fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:'#f59e0b'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>`₹${ctx.raw}L`}}},scales:{x:{ticks:{color:'#64748b'},grid:{color:'#2a2a3a'}},y:{ticks:{color:'#64748b',callback:(v)=>'₹'+v+'L'},grid:{color:'#2a2a3a'}}}}
+  });
+}
+
+// ============================
+// RENDER GOALS
+// ============================
+function renderGoals(){
+  const c = computed();
+
+  // House breakdown
+  const hb = c.houseBreakdown;
+  document.getElementById('house-breakdown').innerHTML = [
+    {l:'Property today',v:fINR(hb.propToday),s:'~75L Bangalore 2BHK'},
+    {l:'Property in 6.5yr',v:fINR(hb.propFuture),s:'8% real estate inflation'},
+    {l:'Down payment (20%)',v:fINR(hb.downPayment),s:'You save this'},
+    {l:'Stamp + Registration',v:fINR(hb.stampDuty),s:'~6.5% of property'},
+    {l:'Furnishing (6.5yr)',v:fINR(hb.furnFuture),s:'₹8L today → inflated'},
+    {l:'Total to save',v:fINR(hb.totalSavingsNeeded),s:'DP + fees + furnishing',hi:true},
+    {l:'Home loan amount',v:fINR(hb.loanAmount),s:'80% of property'},
+    {l:'EMI (20yr@8.5%)',v:fINR(hb.emi)+'/mo',s:'Need ₹2L+ salary by yr7'},
+  ].map(item=>`
+    <div class="house-item ${item.hi?'highlight':''}">
+      <div class="hl">${item.l}</div>
+      <div class="hv" style="color:${item.hi?'var(--accent)':'var(--t1)'}">${item.v}</div>
+      <div class="hs">${item.s}</div>
+    </div>`).join('');
+
+  // All goals
+  const sorted = [...c.goals].sort((a,b)=>a.priority-b.priority);
+  document.getElementById('all-goals-list').innerHTML = sorted.map(g=>`
+    <div class="goal-card" id="gc-${g.id}">
+      <div class="goal-header">
+        <div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:18px">${g.icon}</span>
+            <div>
+              <div class="goal-name">${g.name}</div>
+              <div class="goal-meta">${g.cat} · Priority #${g.priority} · ${g.years} years · ${g.inflRate}% inflation</div>
+            </div>
+          </div>
+          <div class="goal-note" style="margin-top:6px">${g.note||''}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:10px;color:var(--t3)">Inflation-adj. target</div>
+          <div style="font-size:18px;font-weight:700;font-family:'Syne',sans-serif;color:${g.color}">${fINR(g.target)}</div>
+          <div style="font-size:10px;color:var(--orange)">${fINR(g.monthly)}/month needed</div>
+        </div>
+      </div>
+      <div class="progress-wrap" style="height:8px">
+        <div class="progress-fill" style="width:${g.progress}%;background:linear-gradient(90deg,${g.color}88,${g.color})"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:3px">
+        <span>${fINR(g.saved)} saved of ${fINR(g.target)} (${g.progress.toFixed(1)}%)</span>
+        <span>Remaining: ${fINR(g.remaining)}</span>
+      </div>
+      <div class="goal-inputs">
+        <div class="fi"><label>Saved (₹)</label>
+          <input type="number" value="${g.saved}" onchange="updateGoalSaved(${g.id},this.value)"></div>
+        <div class="fi"><label>Today's value (₹)</label>
+          <input type="number" value="${g.todayVal}" onchange="updateGoalField(${g.id},'todayVal',this.value)" ${g.isHouse?'disabled':''}></div>
+        <div class="fi"><label>Years to goal</label>
+          <input type="number" value="${g.years}" onchange="updateGoalField(${g.id},'years',this.value)" style="width:70px"></div>
+        <div class="fi"><label>Inflation %</label>
+          <input type="number" value="${g.inflRate}" onchange="updateGoalField(${g.id},'inflRate',this.value)" style="width:60px"></div>
+        <div class="fi"><label>Priority</label>
+          <input type="number" value="${g.priority}" onchange="updateGoalField(${g.id},'priority',this.value)" style="width:60px"></div>
+      </div>
+    </div>`).join('');
+
+  // Recurring
+  const medM = c.medMonthly;
+  const parM = c.parentsMonthly;
+  document.getElementById('recurring-list').innerHTML = `
+    <div class="panel" style="border-color:#ec489944">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <span style="font-size:20px">💊</span>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:13px">Medical Expenses</div>
+          <div style="font-size:10px;color:var(--t3)">Starts Year 3 · ₹75k/year today → inflated at 7%</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--t2);margin-bottom:8px">₹5k/month medicines + ₹9k/year tests + ₹6k misc</div>
+      <div style="display:flex;gap:16px">
+        <div><div style="font-size:9px;color:var(--t3)">By Year 3</div><div style="font-size:16px;color:#ec4899;font-family:'Syne',sans-serif">${fINR(medM*12)}/yr</div></div>
+        <div><div style="font-size:9px;color:var(--t3)">Monthly</div><div style="font-size:16px;color:#ec4899;font-family:'Syne',sans-serif">${fINR(medM)}/mo</div></div>
+      </div>
+    </div>
+    <div class="panel" style="border-color:#14b8a644">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <span style="font-size:20px">👨‍👩‍👦</span>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:13px">Parents Monthly Support</div>
+          <div style="font-size:10px;color:var(--t3)">Starts Year 3 · ₹5k/month today → inflated at 6%</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:16px">
+        <div><div style="font-size:9px;color:var(--t3)">By Year 3</div><div style="font-size:16px;color:#14b8a6;font-family:'Syne',sans-serif">${fINR(parM)}/mo</div></div>
+        <div><div style="font-size:9px;color:var(--t3)">Annual</div><div style="font-size:16px;color:#14b8a6;font-family:'Syne',sans-serif">${fINR(parM*12)}/yr</div></div>
+      </div>
+    </div>`;
+}
+
+// ============================
+// RENDER MONTHLY
+// ============================
+function renderMonthly(){
+  const c = computed();
+
+  // Phase plans
+  const phase1 = [
+    {name:'🖥️ Workstation', amt:4200, note:'Done in ~11 months'},
+    {name:'💳 Debts', amt:12000, note:'Clear in 4 years'},
+    {name:'🏠 House Fund SIP', amt:8000, note:'Index fund/FD'},
+    {name:'💻 Laptop', amt:1800, note:'Done in ~2 years'},
+    {name:'📱 Phone', amt:1300, note:'Done in ~3 years'},
+    {name:'🏏 Business Seed', amt:2700, note:'Long-term SIP'},
+  ];
+  const phase1Total = phase1.reduce((s,p)=>s+p.amt,0);
+  document.getElementById('phase1-plan').innerHTML = phase1.map(p=>`
+    <div class="phase-row">
+      <div><div class="pname">${p.name}</div><div class="pnote">${p.note}</div></div>
+      <div class="pamt" style="color:var(--green)">₹${p.amt.toLocaleString('en-IN')}</div>
+    </div>`).join('')+`
+    <div class="phase-row" style="margin-top:6px">
+      <div class="pname" style="font-weight:600">Total Allocated</div>
+      <div class="pamt" style="color:var(--accent)">₹${phase1Total.toLocaleString('en-IN')}</div>
+    </div>
+    <div class="phase-row">
+      <div class="pname" style="color:var(--t3)">Emergency / Buffer</div>
+      <div class="pamt" style="color:var(--t3)">Remaining</div>
+    </div>`;
+
+  const phase2 = [
+    {name:'🏠 House Fund (primary)', amt:22000, note:'Aggressive SIP'},
+    {name:'💊 Medical', amt:Math.round(c.medMonthly), note:'From Year 3'},
+    {name:'👨‍👩‍👦 Parents Support', amt:Math.round(c.parentsMonthly), note:'From Year 3'},
+    {name:'🔨 Renovations Fund', amt:6000, note:'₹3k each house'},
+    {name:'🏏 Business Corpus', amt:8000, note:'SIP building'},
+  ];
+  const phase2Total = phase2.reduce((s,p)=>s+p.amt,0);
+  document.getElementById('phase2-plan').innerHTML = phase2.map(p=>`
+    <div class="phase-row">
+      <div><div class="pname">${p.name}</div><div class="pnote">${p.note}</div></div>
+      <div class="pamt" style="color:var(--green)">₹${p.amt.toLocaleString('en-IN')}</div>
+    </div>`).join('')+`
+    <div class="phase-row" style="margin-top:6px">
+      <div class="pname" style="font-weight:600">Total Allocated</div>
+      <div class="pamt" style="color:var(--accent)">₹${phase2Total.toLocaleString('en-IN')}</div>
+    </div>`;
+
+  // Log
+  renderLog();
+  renderNotes();
+  renderMonthlyChart();
+}
+
+function renderLog(){
+  const log = state.monthlyLog;
+  const tbody = document.getElementById('log-tbody');
+  document.getElementById('log-empty').style.display = log.length?'none':'block';
+  tbody.innerHTML = log.slice().reverse().map((e,i)=>`
+    <tr>
+      <td style="font-weight:500;color:var(--t1)">${e.month||'—'}</td>
+      <td style="color:var(--green)">${e.income?fINR(e.income):'—'}</td>
+      <td style="color:var(--accent);font-weight:600">${fINR(e.saved)}</td>
+      <td>${e.income&&e.saved?Math.round(e.saved/e.income*100)+'%':'—'}</td>
+      <td style="color:var(--t2)">${e.where||'—'}</td>
+      <td style="color:var(--t2)">${e.note||'—'}</td>
+      <td><button class="btn-danger" onclick="deleteLog(${log.length-1-i})">✕</button></td>
+    </tr>`).join('');
+
+  // Summary
+  const total = log.reduce((s,e)=>s+e.saved,0);
+  const avg = log.length?total/log.length:0;
+  const best = log.length?Math.max(...log.map(e=>e.saved)):0;
+  document.getElementById('log-summary').innerHTML = [
+    {l:'Total Saved (logged)',v:fINR(total),c:'var(--accent)'},
+    {l:'Monthly Average',v:fINR(avg),c:'var(--green)'},
+    {l:'Best Month',v:fINR(best),c:'var(--blue)'},
+    {l:'Months Logged',v:log.length,c:'var(--t2)'},
+  ].map(s=>`<div><div style="font-size:10px;color:var(--t3)">${s.l}</div><div style="font-size:16px;color:${s.c};font-weight:600;font-family:'Syne',sans-serif">${s.v}</div></div>`).join('');
+}
+
+function renderNotes(){
+  const notes = state.notes;
+  document.getElementById('notes-list').innerHTML = notes.length
+    ? notes.slice().reverse().map((n,i)=>`
+      <div class="note-item">
+        <div class="ntxt">${n.text}</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="ndate">${n.date}</span>
+          <button class="btn-danger" onclick="deleteNote(${notes.length-1-i})">✕</button>
+        </div>
+      </div>`).join('')
+    : '<div style="color:var(--t3);font-size:12px">No notes yet. Press Enter or + to add.</div>';
+}
+
+function renderMonthlyChart(){
+  destroyChart('monthlyChart');
+  const log = state.monthlyLog.slice(-12);
+  if(!log.length){
+    charts['monthlyChart']=new Chart(document.getElementById('monthlyChart'),{type:'bar',data:{labels:['No data yet'],datasets:[{data:[0],backgroundColor:'#2a2a3a'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+    return;
+  }
+  charts['monthlyChart'] = new Chart(document.getElementById('monthlyChart'),{
+    type:'bar',
+    data:{labels:log.map(e=>e.month),datasets:[{label:'Saved',data:log.map(e=>e.saved),backgroundColor:'#f59e0b88',borderColor:'#f59e0b',borderWidth:1,borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>fINR(ctx.raw)}}},scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#64748b',callback:(v)=>fINR(v)},grid:{color:'#2a2a3a'}}}}
+  });
+}
+
+// ============================
+// RENDER TIPS
+// ============================
+function renderTips(){
+  const c = computed();
+  const savRate = c.avail>0?(c.avail/c.takeHome*100):0;
+
+  // Snapshot
+  document.getElementById('snapshot-panel').innerHTML = `
+    <div class="panel-title">🧠 Your Financial Snapshot</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px">
+      ${[
+        {l:'Savings Rate',v:savRate.toFixed(0)+'%',n:savRate>40?'✅ Excellent':savRate>25?'⚠️ Good, aim for 40%+':'❌ Needs improvement',c:savRate>40?'var(--green)':savRate>25?'var(--accent)':'var(--red)'},
+        {l:'Emergency Fund',v:fINR(state.cashSavings),n:`Target: ${fINR(state.expenses*3)} (3mo expenses)`,c:state.cashSavings>=state.expenses*3?'var(--green)':'var(--red)'},
+        {l:'Debt Urgency',v:'High',n:'Clear ₹5-7L in 4yr max',c:'var(--red)'},
+        {l:'House Timeline',v:'Year 6-7',n:'Needs ₹1.5L+/mo salary by then',c:'var(--blue)'},
+        {l:'Monthly Saveable',v:fINR(c.avail),n:'After take-home - expenses',c:c.avail>30000?'var(--green)':'var(--orange)'},
+        {l:'Total Goals Gap',v:fINR(c.totalNeeded-c.totalCurrentSavings),n:'How much still to save',c:'var(--accent)'},
+      ].map(s=>`<div style="background:var(--bg3);border-radius:8px;padding:10px;border-left:3px solid ${s.c}">
+        <div style="font-size:9px;color:var(--t3)">${s.l}</div>
+        <div style="font-size:17px;font-weight:700;color:${s.c};font-family:'Syne',sans-serif">${s.v}</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:2px">${s.n}</div>
+      </div>`).join('')}
+    </div>`;
+
+  // Phase tips
+  const phases=[
+    {phase:'Year 0–1 (Right Now)',icon:'⚡',color:'#f59e0b',tips:[
+      `Your take-home is ~${fINR(c.takeHome)}/mo. After ₹${fINR(state.expenses)} expenses, save ${fINR(c.avail)}/month minimum.`,
+      'First: Build emergency fund of ₹30k (3 months expenses) in a liquid FD or savings account.',
+      'Allocate ₹4,200/month for workstation — done in ~11 months. Buy after 12 months.',
+      'Put ₹12,000/month toward family debts — clears them in ~4 years. More = faster.',
+      'Start ₹5,000/month SIP in Nifty 50 index fund (PPFAS Flexi Cap or UTI Nifty 50) for house corpus.',
+      'Save ₹1,800/month for laptop, ₹1,300 for phone in a separate RD.',
+      "Don't touch mutual funds — ₹77k compounding at 12% = ₹2.7L in 10 years.",
+    ]},
+    {phase:'Year 1–3 (Momentum Phase)',icon:'📈',color:'#10b981',tips:[
+      'As salary hits 8 LPA (~₹53k take-home), redirect the extra ₹12k to house SIP.',
+      'Target: ₹15-18k/month into house corpus SIP by end of Year 3.',
+      'Clear workstation + laptop — divert freed-up ₹6k/month to house fund.',
+      'Medical expenses start in Year 3 (~₹7,700/month) — plan budget gap in advance.',
+      'Parents support starts Year 3 (~₹6,000/month) — start a dedicated RD from Year 2.',
+      'Keep salary increments conversation alive — target 20% hike per year. 9 LPA by Year 2 is realistic.',
+    ]},
+    {phase:'Year 3–6 (Debt-Free & Building)',icon:'🏗️',color:'#6366f1',tips:[
+      'By Year 4, debts should be cleared — redirect ₹12k to house fund immediately.',
+      'House SIP target: ₹22-25k/month to accumulate ₹44L+ by Year 6.5.',
+      'For home loan eligibility, banks allow 40-50% of take-home as EMI. Need ~₹1.8L/month income by Year 7.',
+      'Start renovation fund: ₹3k/month each for Gurgaon + Ludhiana.',
+      'Consider a Pre-Approved Home Loan from bank at Year 5 to lock in lower interest rates.',
+      'Salary by Year 6 target: 15-18 LPA (realistic with good performance/job switches).',
+    ]},
+    {phase:'Year 6–10 (Big Goals)',icon:'🚀',color:'#f97316',tips:[
+      'Purchase house: ₹44L+ savings + home loan ~₹1 Cr. Register in your name for long-term wealth.',
+      'Post-purchase: redirect house SIP to business corpus immediately.',
+      'Sports Business: Start small — 1 bowling machine + 2 nets first to test market, then scale.',
+      'Do Gurgaon renovation first (Year 7), Ludhiana next (Year 8) — stagger to manage cash flow.',
+      'By Year 10: aim for ₹50L+ business corpus alongside house ownership. That\'s real wealth.',
+      'Keep increasing parents support annually — set up a fixed transfer so it\'s automatic.',
+    ]},
+  ];
+  document.getElementById('tips-sections').innerHTML = phases.map(p=>`
+    <div class="tip-phase panel" style="border-color:${p.color}33;margin-bottom:14px">
+      <div style="font-family:'Syne',sans-serif;color:${p.color};font-size:14px;margin-bottom:12px">${p.icon} ${p.phase}</div>
+      ${p.tips.map(t=>`<div class="tip-item"><div class="tip-dot" style="background:${p.color}"></div><div class="tip-text">${t}</div></div>`).join('')}
+    </div>`).join('');
+
+  // Investment vehicles
+  document.getElementById('invest-table').innerHTML = [
+    {v:'Nifty 50 Index SIP',f:'House & business corpus (5yr+)',r:'11–13%',ri:'Medium',i:'📈'},
+    {v:'Liquid Mutual Fund',f:'Emergency fund & short-term goals',r:'6–7%',ri:'Very Low',i:'💧'},
+    {v:'PPF (₹1.5L/year)',f:'Long-term tax-free savings (section 80C)',r:'7.1%',ri:'Zero',i:'🛡️'},
+    {v:'Recurring Deposit',f:'Laptop, phone, workstation goals',r:'6–7%',ri:'None',i:'🏦'},
+    {v:'ELSS Mutual Fund',f:'Tax saving + wealth creation (80C)',r:'12–15%',ri:'Medium',i:'💹'},
+    {v:'NPS Tier 1 (optional)',f:'Retirement + extra ₹50k deduction',r:'9–10%',ri:'Medium',i:'🌅'},
+  ].map(v=>`
+    <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #1e2433;align-items:flex-start">
+      <span style="font-size:18px">${v.i}</span>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:500;color:var(--t1)">${v.v}</div>
+        <div style="font-size:11px;color:var(--t3)">${v.f}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:12px;color:var(--green);font-weight:600">${v.r}</div>
+        <div style="font-size:10px;color:var(--t3)">${v.ri} risk</div>
+      </div>
+    </div>`).join('');
+
+  // Tax tips
+  document.getElementById('tax-tips').innerHTML = [
+    {t:'Section 80C (₹1.5L limit)',d:'ELSS SIP + PPF + EPF contributions. Saves ₹15,000–46,800/year in tax.'},
+    {t:'Section 80D (Medical insurance)',d:'Premium for yourself = ₹25k deduction. Buy a ₹10L health policy (~₹8k/year) now.'},
+    {t:'HRA exemption',d:'Even though you live with parents, once you start paying them rent (with receipt), you can claim HRA.'},
+    {t:'Section 24(b) (Home loan interest)',d:'Once you take home loan, interest up to ₹2L/year is tax-deductible.'},
+    {t:'Section 80EEA (First-time buyer)',d:'Additional ₹1.5L deduction on home loan interest for first-time buyers.'},
+    {t:'NPS Section 80CCD(1B)',d:'Extra ₹50,000 deduction over 80C limit. Good for 30%+ tax bracket in future.'},
+  ].map(t=>`
+    <div style="margin-bottom:12px">
+      <div style="font-size:12px;font-weight:500;color:var(--accent);margin-bottom:2px">${t.t}</div>
+      <div style="font-size:11px;color:var(--t2);line-height:1.6">${t.d}</div>
+    </div>`).join('');
+}
+
+// ============================
+// INTERACTIONS
+// ============================
+function updateGoalSaved(id, val){
+  state.goals = state.goals.map(g=>g.id===id?{...g,saved:parseFloat(val)||0}:g);
+  markUnsaved(); renderActive();
+}
+function updateGoalField(id, field, val){
+  state.goals = state.goals.map(g=>g.id===id?{...g,[field]:parseFloat(val)||0}:g);
+  markUnsaved(); renderActive();
+}
+
+function addLog(){
+  const month = document.getElementById('log-month').value;
+  const saved = parseFloat(document.getElementById('log-saved').value)||0;
+  if(!month||!saved) return alert('Enter at least month and saved amount.');
+  state.monthlyLog.push({
+    month, saved,
+    income: parseFloat(document.getElementById('log-income').value)||0,
+    where: document.getElementById('log-where').value,
+    note: document.getElementById('log-note').value,
+    date: new Date().toLocaleDateString('en-IN')
+  });
+  ['log-month','log-saved','log-income','log-where','log-note'].forEach(id=>document.getElementById(id).value='');
+  markUnsaved(); renderMonthly();
+}
+
+function deleteLog(i){
+  state.monthlyLog.splice(i,1);
+  markUnsaved(); renderMonthly();
+}
+
+function addNote(){
+  const txt = document.getElementById('note-input').value.trim();
+  if(!txt) return;
+  state.notes.push({text:txt, date:new Date().toLocaleDateString('en-IN')});
+  document.getElementById('note-input').value='';
+  markUnsaved(); renderNotes();
+}
+
+function deleteNote(i){
+  state.notes.splice(i,1);
+  markUnsaved(); renderNotes();
+}
+
+// ============================
+// MODAL
+// ============================
+function openModal(){
+  document.getElementById('m-name').value = state.name||'Kartik';
+  document.getElementById('m-inf-gen').value = state.infGen;
+  document.getElementById('m-inf-re').value = state.infRE;
+  document.getElementById('m-inf-med').value = state.infMed;
+  document.getElementById('m-sip-ret').value = state.sipRet;
+  document.getElementById('m-house-price').value = state.housePrice;
+  document.getElementById('m-furnish').value = state.furnishing;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
+function applySettings(){
+  state.infGen = +document.getElementById('m-inf-gen').value||6;
+  state.infRE = +document.getElementById('m-inf-re').value||8;
+  state.infMed = +document.getElementById('m-inf-med').value||7;
+  state.sipRet = +document.getElementById('m-sip-ret').value||10;
+  state.housePrice = +document.getElementById('m-house-price').value||7500000;
+  state.furnishing = +document.getElementById('m-furnish').value||800000;
+  closeModal(); markUnsaved(); renderActive();
+}
+
+// ============================
+// UTILS
+// ============================
+function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
+
+let activeTab = 'overview';
+function renderActive(){
+  if(activeTab==='overview') renderOverview();
+  else if(activeTab==='goals') renderGoals();
+  else if(activeTab==='monthly') renderMonthly();
+  else if(activeTab==='tips') renderTips();
+}
+
+// Override switchTab to track active
+const origSwitch = window.switchTab;
+window.switchTab = function(name){
+  activeTab = name;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  event.target.classList.add('active');
+  renderTab(name);
+};
+
+function renderTab(name){
+  activeTab = name;
+  if(name==='overview') renderOverview();
+  else if(name==='goals') renderGoals();
+  else if(name==='monthly') renderMonthly();
+  else if(name==='tips') renderTips();
+}
+
+// ============================
+// INIT
+// ============================
+document.getElementById('header-date').textContent =
+  'Your 10-year financial roadmap · ' + new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+
+syncSettingsBar();
+const initC = computed();
+document.getElementById('avail-disp').textContent = fINR(initC.avail);
+
+// Auto-save every 3 min
+setInterval(saveAll, 180000);
+
+// Initial render
+renderOverview();
+renderTips(); // precompute tips silently
+setTimeout(()=>{ document.getElementById('tab-tips').classList.remove('active'); }, 10);
+
+// Ctrl+S shortcut
+document.addEventListener('keydown', e=>{ if(e.ctrlKey&&e.key==='s'){e.preventDefault();saveAll();}});
+</script>
+</body>
+</html>
