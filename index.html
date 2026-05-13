@@ -240,6 +240,9 @@ section{
 /* ── REVEAL ────────────────────────────────── */
 .reveal{opacity:0;transform:translateY(22px);transition:opacity 0.65s ease,transform 0.65s ease}
 .reveal.visible{opacity:1;transform:none}
+/* Safety net: force-show after 2s in case observer misses */
+.reveal{animation:revealFallback 0s 2s forwards}
+@keyframes revealFallback{to{opacity:1;transform:none}}
 
 /* ── TIMELINE ──────────────────────────────── */
 .timeline{position:relative}
@@ -869,8 +872,26 @@ const obs = new IntersectionObserver((entries) => {
       obs.unobserve(e.target);
     }
   });
-}, {threshold:0.08, rootMargin:'0px 0px -28px 0px'});
-document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+}, {threshold:0.05, rootMargin:'0px 0px 0px 0px'});
+
+document.querySelectorAll('.reveal').forEach(el => {
+  // If already in viewport on load (e.g. page was scrolled), show immediately
+  const rect = el.getBoundingClientRect();
+  if(rect.top < window.innerHeight && rect.bottom > 0){
+    el.classList.add('visible');
+  } else {
+    obs.observe(el);
+  }
+});
+  // Re-check all un-revealed elements on every scroll, as a safety net
+window.addEventListener('scroll', () => {
+  document.querySelectorAll('.reveal:not(.visible)').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if(rect.top < window.innerHeight - 20){
+      el.classList.add('visible');
+    }
+  });
+}, {passive: true});
 
 /* Stagger grid items */
 document.querySelectorAll('.projects-grid .reveal, .skills-grid .reveal, .extra-grid .reveal').forEach((el,i) => {
