@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kartik's Budget Dashboard</title>
+<title>Your Budget Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -11,7 +11,7 @@
 :root{
   --bg:#0d0d14;--bg2:#1a1a24;--bg3:#13131c;--border:#2a2a3a;
   --accent:#f59e0b;--green:#10b981;--blue:#6366f1;--red:#ef4444;
-  --orange:#f97316;--pink:#ec4899;--teal:#14b8a6;--purple:#8b5cf6;--cyan:#06b6d4;
+  --orange:#f97316;--purple:#8b5cf6;--teal:#14b8a6;--cyan:#06b6d4;
   --t1:#f1f5f9;--t2:#94a3b8;--t3:#475569;--t4:#334155;
 }
 body{background:var(--bg);color:var(--t1);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh}
@@ -25,256 +25,218 @@ button{cursor:pointer;font-family:'DM Sans',sans-serif;border:none;border-radius
 .btn-ghost:hover{background:var(--bg2);color:var(--t1)}
 .btn-danger{background:#ef444422;color:var(--red);padding:4px 10px;font-size:12px;border:1px solid #ef444433}
 .btn-danger:hover{background:#ef444433}
-
-/* HEADER */
 #header{background:linear-gradient(135deg,#1a1a2e,#16213e);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:100}
-#header h1{font-size:20px;color:var(--accent)}
+#header h1{font-size:20px;color:var(--accent);cursor:pointer;border-bottom:1px dashed transparent;transition:border .2s}
+#header h1:hover{border-color:var(--accent)}
 #header .sub{font-size:11px;color:var(--t3);margin-top:2px}
-.save-badge{font-size:11px;padding:3px 10px;border-radius:12px;background:#10b98122;color:var(--green);border:1px solid #10b98133}
-
-/* NAV */
-#nav{display:flex;gap:6px;background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 24px;overflow-x:auto}
+.save-badge{font-size:11px;padding:3px 10px;border-radius:12px;background:#10b98122;color:var(--green);border:1px solid #10b98133;white-space:nowrap}
+#nav{display:flex;gap:6px;background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 24px;overflow-x:auto;scrollbar-width:none}
+#nav::-webkit-scrollbar{display:none}
 .nav-btn{padding:7px 16px;border-radius:8px;border:none;background:transparent;color:var(--t2);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s}
 .nav-btn.active{background:var(--accent);color:#0d0d14;font-weight:600}
 .nav-btn:hover:not(.active){background:var(--bg3);color:var(--t1)}
-
-/* SETTINGS BAR */
-#settings-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end}
+#settings-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
 .setting-field{display:flex;flex-direction:column;gap:3px}
 .setting-field label{font-size:10px;color:var(--t3)}
-.setting-field input{width:110px}
-.avail-save{margin-left:auto;text-align:right}
-.avail-save .label{font-size:11px;color:var(--t3)}
-.avail-save .val{font-size:24px;font-weight:700;font-family:'Syne',sans-serif;color:var(--green)}
-
-/* TABS */
+.setting-field input{width:120px}
+.avail-field{display:flex;flex-direction:column;gap:3px;margin-left:auto}
+.avail-field label{font-size:10px;color:var(--t3)}
+.avail-val{font-size:22px;font-weight:700;font-family:'Syne',sans-serif;color:var(--green);background:transparent;border:none;width:160px;cursor:default}
 .tab{display:none}
 .tab.active{display:block}
-
-/* MAIN */
 #main{padding:20px 24px;max-width:1200px;margin:0 auto}
-
-/* CARDS GRID */
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
 .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;border-left-width:3px}
 .stat-card .icon{font-size:18px;margin-bottom:6px}
 .stat-card .label{font-size:10px;color:var(--t3);margin-bottom:4px}
 .stat-card .value{font-size:20px;font-weight:700;font-family:'Syne',sans-serif}
 .stat-card .sub{font-size:10px;color:var(--t3);margin-top:4px}
-
-/* GRID 2 COL */
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
 @media(max-width:700px){.grid2{grid-template-columns:1fr}}
-
-/* PANEL */
 .panel{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:16px}
 .panel-title{font-family:'Syne',sans-serif;font-size:14px;color:var(--t1);margin-bottom:14px;display:flex;align-items:center;gap:6px}
-
-/* PROGRESS BAR */
 .progress-wrap{background:var(--bg3);border-radius:4px;height:7px;overflow:hidden;margin:4px 0}
 .progress-fill{height:100%;border-radius:4px;transition:width .5s ease}
-
-/* GOAL CARD */
 .goal-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;transition:border .2s}
 .goal-card:hover{border-color:var(--t4)}
 .goal-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:8px}
 .goal-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:700}
 .goal-meta{font-size:10px;color:var(--t3);margin-top:2px}
 .goal-note{font-size:11px;color:var(--t2);margin-bottom:8px;line-height:1.5}
-.goal-amounts{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px}
-.goal-amt-block{text-align:center}
-.goal-amt-block .alabel{font-size:9px;color:var(--t3)}
-.goal-amt-block .aval{font-size:13px;font-weight:600;font-family:'Syne',sans-serif}
 .goal-inputs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:flex-end}
 .goal-inputs .fi{display:flex;flex-direction:column;gap:2px}
 .goal-inputs .fi label{font-size:9px;color:var(--t3)}
 .goal-inputs input{width:90px;font-size:12px}
-
-/* HOUSE BREAKDOWN */
-.house-box{background:linear-gradient(135deg,#1a1208,var(--bg2));border:1px solid #f59e0b44;border-radius:12px;padding:18px;margin-bottom:16px}
-.house-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:12px}
-.house-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px}
-.house-item.highlight{background:#2a1f0a;border-color:#f59e0b88}
-.house-item .hl{font-size:9px;color:var(--t3);margin-bottom:3px}
-.house-item .hv{font-size:15px;font-weight:700;font-family:'Syne',sans-serif}
-.house-item .hs{font-size:9px;color:var(--t3);margin-top:2px}
-
-/* LOG TABLE */
+.source-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.source-icon{font-size:22px}
+.source-info{flex:1;min-width:100px}
+.source-name{font-size:13px;font-weight:600;font-family:'Syne',sans-serif}
+.source-sub{font-size:10px;color:var(--t3)}
+.source-amount{font-size:18px;font-weight:700;font-family:'Syne',sans-serif}
+.source-inputs{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+.source-inputs .fi{display:flex;flex-direction:column;gap:2px}
+.source-inputs .fi label{font-size:9px;color:var(--t3)}
+.source-inputs input{width:110px;font-size:12px}
 .log-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
 .log-table th{text-align:left;padding:6px 8px;color:var(--t3);font-weight:500;border-bottom:1px solid var(--border)}
 .log-table td{padding:6px 8px;border-bottom:1px solid #1e2433;color:var(--t2)}
 .log-table tr:hover td{background:var(--bg3)}
-
-/* TIPS */
 .tip-phase{border-radius:12px;padding:16px;margin-bottom:14px}
 .tip-item{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px}
 .tip-dot{width:6px;height:6px;border-radius:50%;margin-top:5px;flex-shrink:0}
 .tip-text{font-size:12px;color:#cbd5e1;line-height:1.6}
-
-/* BADGE */
-.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500}
-.badge-green{background:#10b98122;color:var(--green);border:1px solid #10b98133}
-.badge-amber{background:#f59e0b22;color:var(--accent);border:1px solid #f59e0b33}
-.badge-red{background:#ef444422;color:var(--red);border:1px solid #ef444433}
-.badge-blue{background:#6366f122;color:var(--blue);border:1px solid #6366f133}
-
-/* NOTES */
 .note-item{display:flex;justify-content:space-between;align-items:flex-start;background:var(--bg3);border-radius:6px;padding:8px 10px;margin-bottom:6px;font-size:12px;gap:8px}
 .note-item .ntxt{color:var(--t1);flex:1;line-height:1.5}
 .note-item .ndate{color:var(--t3);font-size:10px;flex-shrink:0}
-
-/* PHASE PLAN */
-.phase-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #1e2433}
+.phase-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #1e2433;gap:8px;flex-wrap:wrap}
 .phase-row:last-child{border-bottom:none}
-.phase-row .pname{font-size:12px;color:var(--t1)}
-.phase-row .pnote{font-size:10px;color:var(--t3)}
-.phase-row .pamt{font-size:13px;font-weight:600}
-
-/* MODAL */
-#modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center}
-#modal-overlay.open{display:flex}
-.modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;width:90%;max-width:480px;max-height:85vh;overflow-y:auto}
+.phase-row input[type=text]{background:transparent;border:none;border-bottom:1px dashed var(--border);border-radius:0;color:var(--t1);font-size:12px;padding:2px 0}
+.phase-row input[type=number]{width:90px;font-size:12px;padding:4px 6px}
+.parents-callout{background:linear-gradient(135deg,#8b5cf622,#8b5cf611);border:1px solid #8b5cf633;border-radius:12px;padding:14px 16px;margin-bottom:16px}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;align-items:center;justify-content:center;padding:16px}
+.overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;width:100%;max-width:480px;max-height:88vh;overflow-y:auto}
 .modal h2{font-size:16px;margin-bottom:16px;color:var(--accent)}
-
-/* CHART WRAPPER */
+.frow{display:flex;gap:10px;flex-wrap:wrap}
+.frow .fg{flex:1;min-width:100px}
+.fg{margin-bottom:10px}
+.fg label{font-size:11px;color:var(--t3);display:block;margin-bottom:3px}
+.fg input,.fg select,.fg textarea{width:100%}
 .chart-wrap{position:relative;width:100%;height:220px}
 .chart-wrap-sm{position:relative;width:100%;height:180px}
-
-/* SCROLLBAR */
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--bg3)}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+@media(max-width:600px){#header{padding:10px 14px}#header h1{font-size:16px}#nav{padding:8px 12px}#settings-bar{padding:10px 14px}#main{padding:14px}.setting-field input{width:95px}}
 </style>
 </head>
 <body>
 
 <div id="header">
   <div>
-    <h1>Kartik's Budget Dashboard</h1>
+    <h1 id="app-title" onclick="renameApp()" title="Click to rename">Your Budget Dashboard</h1>
     <div class="sub" id="header-date"></div>
   </div>
   <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-    <span class="save-badge" id="save-badge">● All saved</span>
-    <button class="btn-ghost" onclick="openModal()">⚙ Settings</button>
-    <button class="btn-primary" onclick="saveAll()">Save Data</button>
+    <span class="save-badge" id="save-badge">&#10003; All saved</span>
+    <button class="btn-ghost" onclick="openSettingsModal()">Settings</button>
+    <button class="btn-ghost" onclick="downloadDashboard()" title="Download a copy with your data baked in">&#8595; Download</button>
+    <button class="btn-primary" onclick="saveAll()">Save</button>
   </div>
 </div>
 
 <div id="nav">
-  <button class="nav-btn active" onclick="switchTab('overview')">📊 Overview</button>
-  <button class="nav-btn" onclick="switchTab('goals')">🎯 Goals</button>
-  <button class="nav-btn" onclick="switchTab('monthly')">📅 Monthly Log</button>
-  <button class="nav-btn" onclick="switchTab('tips')">💡 Tips & Plan</button>
+  <button class="nav-btn active" onclick="switchTab('overview',this)">Overview</button>
+  <button class="nav-btn" onclick="switchTab('goals',this)">Goals</button>
+  <button class="nav-btn" onclick="switchTab('savings',this)">My Savings</button>
+  <button class="nav-btn" onclick="switchTab('monthly',this)">Monthly Log</button>
+  <button class="nav-btn" onclick="switchTab('tips',this)">Tips &amp; Plan</button>
 </div>
 
 <div id="settings-bar">
   <div class="setting-field">
-    <label>Monthly CTC (₹)</label>
-    <input type="number" id="s-ctc" value="50000" onchange="recalc()">
+    <label>Monthly CTC (Rs.)</label>
+    <input type="number" id="s-ctc" value="50000" oninput="recalc()">
   </div>
   <div class="setting-field">
     <label>Take-home % of CTC</label>
-    <input type="number" id="s-th" value="80" min="50" max="100" onchange="recalc()">
+    <input type="number" id="s-th" value="80" min="1" max="100" oninput="recalc()">
   </div>
   <div class="setting-field">
-    <label>Monthly Expenses (₹)</label>
-    <input type="number" id="s-exp" value="10000" onchange="recalc()">
+    <label>Monthly Expenses (Rs.)</label>
+    <input type="number" id="s-exp" value="10000" oninput="recalc()">
   </div>
-  <div class="setting-field">
-    <label>Cash + FD Savings (₹)</label>
-    <input type="number" id="s-cash" value="73000" onchange="recalc()">
-  </div>
-  <div class="setting-field">
-    <label>Mutual Funds (₹)</label>
-    <input type="number" id="s-mf" value="77000" onchange="recalc()">
-  </div>
-  <div class="avail-save">
-    <div class="label">Available to save/month</div>
-    <div class="val" id="avail-disp">₹0</div>
+  <div class="avail-field">
+    <label>Available to save / month</label>
+    <input class="avail-val" id="avail-disp" readonly tabindex="-1">
   </div>
 </div>
 
-<!-- ===== OVERVIEW TAB ===== -->
+<!-- OVERVIEW -->
 <div id="tab-overview" class="tab active">
 <div id="main">
-
   <div class="cards-grid" id="summary-cards"></div>
-
   <div class="grid2">
     <div class="panel">
-      <div class="panel-title">🎯 Priority Goals — Progress</div>
+      <div class="panel-title">Priority Goals — Progress</div>
       <div id="priority-goals-list"></div>
     </div>
     <div class="panel">
-      <div class="panel-title">📊 Monthly Allocation Needed</div>
-      <div style="font-size:11px;color:var(--t3);margin-bottom:8px">Ideal split of savings across top goals</div>
-      <div class="chart-wrap"><canvas id="pieChart" role="img" aria-label="Pie chart showing monthly savings allocation across goals">Monthly savings allocation</canvas></div>
+      <div class="panel-title">Monthly Allocation Needed</div>
+      <div style="font-size:11px;color:var(--t3);margin-bottom:8px">Ideal split of savings across goals</div>
+      <div class="chart-wrap"><canvas id="pieChart"></canvas></div>
       <div id="pie-legend" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px"></div>
     </div>
   </div>
-
   <div class="panel">
-    <div class="panel-title">📅 Goal Timeline (years to achieve)</div>
-    <div class="chart-wrap"><canvas id="timelineChart" role="img" aria-label="Bar chart showing years remaining to achieve each goal">Goal timelines</canvas></div>
+    <div class="panel-title">Goal Timeline (years to achieve)</div>
+    <div class="chart-wrap"><canvas id="timelineChart"></canvas></div>
   </div>
-
   <div class="panel">
-    <div class="panel-title">💰 Savings Growth Projection</div>
-    <div style="font-size:11px;color:var(--t3);margin-bottom:8px">If you save ₹30k/month with 10% annual returns</div>
-    <div class="chart-wrap"><canvas id="projChart" role="img" aria-label="Line chart showing savings projection over 10 years">Savings projection</canvas></div>
+    <div class="panel-title">Savings Growth Projection</div>
+    <div style="font-size:11px;color:var(--t3);margin-bottom:8px" id="proj-sub"></div>
+    <div class="chart-wrap"><canvas id="projChart"></canvas></div>
   </div>
-
 </div>
 </div>
 
-<!-- ===== GOALS TAB ===== -->
+<!-- GOALS -->
 <div id="tab-goals" class="tab">
 <div id="main">
-
-  <!-- House Breakdown -->
-  <div class="house-box">
-    <div style="font-family:'Syne',sans-serif;font-size:15px;color:var(--accent);margin-bottom:4px">🏠 House Goal — Full Breakdown</div>
-    <div style="font-size:11px;color:var(--t3)">Good 2BHK in Bangalore (Whitefield / HSR / Sarjapur). Today's price: <b style="color:var(--t2)">~₹75L</b>. Inflation: 8%/yr</div>
-    <div class="house-grid" id="house-breakdown"></div>
+  <div class="parents-callout">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-size:14px;color:var(--purple);margin-bottom:2px">Parents Monthly Support</div>
+        <div style="font-size:11px;color:var(--t2)">Track Rs.5,000 to Rs.10,000/month recurring support as a goal.</div>
+      </div>
+      <button class="btn-primary" onclick="openGoalModal('parents')" style="font-size:12px;padding:6px 14px">+ Add / Edit</button>
+    </div>
+    <div id="parents-display" style="margin-top:10px"></div>
   </div>
-
-  <!-- All Goals -->
-  <div style="font-size:12px;color:var(--t3);margin-bottom:12px">Edit saved amounts & timelines below. Changes auto-recalculate. Hit <b style="color:var(--t1)">Save Data</b> to persist.</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+    <div style="font-size:12px;color:var(--t3)">Edit fields inline. Hit <b style="color:var(--t1)">Save</b> to keep changes.</div>
+    <button class="btn-primary" onclick="openGoalModal()" style="font-size:12px;padding:6px 14px">+ Add New Goal</button>
+  </div>
   <div id="all-goals-list"></div>
-
-  <!-- Recurring commitments -->
-  <div style="font-family:'Syne',sans-serif;font-size:14px;color:var(--t1);margin:20px 0 10px">🔄 Recurring Monthly Commitments (start Year 3)</div>
-  <div class="grid2" id="recurring-list"></div>
-
 </div>
 </div>
 
-<!-- ===== MONTHLY TAB ===== -->
+<!-- SAVINGS -->
+<div id="tab-savings" class="tab">
+<div id="main">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-size:16px;color:var(--t1)">My Savings and Assets</div>
+      <div style="font-size:11px;color:var(--t3);margin-top:2px">Add all your saving buckets — FD, SIP, EPF, Gold, anything</div>
+    </div>
+    <button class="btn-primary" onclick="openSourceModal()">+ Add Source</button>
+  </div>
+  <div id="sources-list"></div>
+  <div class="panel">
+    <div class="panel-title">Savings Breakdown</div>
+    <div class="chart-wrap"><canvas id="savingsChart"></canvas></div>
+  </div>
+</div>
+</div>
+
+<!-- MONTHLY -->
 <div id="tab-monthly" class="tab">
 <div id="main">
   <div class="grid2">
-    <!-- Add Entry -->
     <div>
       <div class="panel">
-        <div class="panel-title">➕ Log This Month</div>
+        <div class="panel-title">Log This Month</div>
         <div style="display:flex;flex-direction:column;gap:8px">
-          <div><label style="font-size:11px;color:var(--t3);display:block;margin-bottom:3px">Month & Year</label>
-            <input type="text" id="log-month" placeholder="e.g. June 2025" style="width:100%"></div>
-          <div><label style="font-size:11px;color:var(--t3);display:block;margin-bottom:3px">Income received (₹)</label>
-            <input type="number" id="log-income" placeholder="Take-home this month" style="width:100%"></div>
-          <div><label style="font-size:11px;color:var(--t3);display:block;margin-bottom:3px">Amount saved (₹)</label>
-            <input type="number" id="log-saved" placeholder="Total saved this month" style="width:100%"></div>
-          <div><label style="font-size:11px;color:var(--t3);display:block;margin-bottom:3px">Where did you save it?</label>
-            <input type="text" id="log-where" placeholder="e.g. FD ₹10k, SIP ₹5k" style="width:100%"></div>
-          <div><label style="font-size:11px;color:var(--t3);display:block;margin-bottom:3px">Notes</label>
-            <input type="text" id="log-note" placeholder="Any note for this month" style="width:100%"></div>
+          <div class="fg" style="margin:0"><label>Month and Year</label><input type="text" id="log-month" placeholder="e.g. June 2025"></div>
+          <div class="fg" style="margin:0"><label>Income received (Rs.)</label><input type="number" id="log-income" placeholder="Take-home this month"></div>
+          <div class="fg" style="margin:0"><label>Amount saved (Rs.)</label><input type="number" id="log-saved" placeholder="Total saved this month"></div>
+          <div class="fg" style="margin:0"><label>Where did you save it?</label><input type="text" id="log-where" placeholder="e.g. FD 10k, SIP 5k"></div>
+          <div class="fg" style="margin:0"><label>Notes</label><input type="text" id="log-note" placeholder="Any note for this month"></div>
           <button class="btn-primary" onclick="addLog()" style="margin-top:4px">+ Log Month</button>
         </div>
       </div>
-
-      <!-- Notes -->
       <div class="panel">
-        <div class="panel-title">📌 Quick Notes</div>
+        <div class="panel-title">Quick Notes</div>
         <div style="display:flex;gap:8px;margin-bottom:10px">
           <input type="text" id="note-input" placeholder="Add a note or reminder..." style="flex:1" onkeydown="if(event.key==='Enter')addNote()">
           <button class="btn-primary" onclick="addNote()">+</button>
@@ -282,798 +244,546 @@ button{cursor:pointer;font-family:'DM Sans',sans-serif;border:none;border-radius
         <div id="notes-list"></div>
       </div>
     </div>
-
-    <!-- Monthly chart + log -->
     <div>
       <div class="panel">
-        <div class="panel-title">📈 Monthly Savings Progress</div>
-        <div class="chart-wrap-sm"><canvas id="monthlyChart" role="img" aria-label="Bar chart of monthly savings">Monthly savings</canvas></div>
+        <div class="panel-title">Monthly Savings Chart</div>
+        <div class="chart-wrap-sm"><canvas id="monthlyChart"></canvas></div>
       </div>
-
       <div class="panel">
-        <div class="panel-title">📋 Savings Log</div>
+        <div class="panel-title">Savings Log</div>
         <div id="log-summary" style="display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap"></div>
-        <table class="log-table" id="log-table">
-          <thead><tr><th>Month</th><th>Income</th><th>Saved</th><th>Rate</th><th>Where</th><th>Note</th><th></th></tr></thead>
-          <tbody id="log-tbody"></tbody>
-        </table>
-        <div id="log-empty" style="color:var(--t3);font-size:12px;text-align:center;padding:20px">No entries yet. Start logging to track your progress!</div>
+        <div style="overflow-x:auto">
+          <table class="log-table">
+            <thead><tr><th>Month</th><th>Income</th><th>Saved</th><th>Rate</th><th>Where</th><th>Note</th><th></th></tr></thead>
+            <tbody id="log-tbody"></tbody>
+          </table>
+        </div>
+        <div id="log-empty" style="color:var(--t3);font-size:12px;text-align:center;padding:20px">No entries yet. Start logging!</div>
       </div>
     </div>
   </div>
-
-  <!-- Phase Allocation Plan -->
-  <div class="grid2">
-    <div class="panel">
-      <div class="panel-title">⚡ Phase 1 Allocation (Year 0–2)</div>
-      <div style="font-size:11px;color:var(--t3);margin-bottom:12px">Salary ~₹40–52k take-home | Available: ~₹30–40k/month</div>
-      <div id="phase1-plan"></div>
-    </div>
-    <div class="panel">
-      <div class="panel-title">📈 Phase 2 Allocation (Year 3–6)</div>
-      <div style="font-size:11px;color:var(--t3);margin-bottom:12px">Salary ~₹55–70k take-home | Available: ~₹40–55k/month</div>
-      <div id="phase2-plan"></div>
-    </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+    <div style="font-family:'Syne',sans-serif;font-size:15px;color:var(--t1)">Monthly Allocation Plans</div>
+    <button class="btn-primary" onclick="addPhase()" style="font-size:12px;padding:6px 14px">+ Add Phase</button>
   </div>
+  <div id="phases-container"></div>
 </div>
 </div>
 
-<!-- ===== TIPS TAB ===== -->
+<!-- TIPS -->
 <div id="tab-tips" class="tab">
 <div id="main">
-
-  <!-- Financial Snapshot -->
   <div class="panel" id="snapshot-panel"></div>
-
-  <!-- Phase Tips -->
   <div id="tips-sections"></div>
-
-  <!-- Investment Vehicles -->
   <div class="panel">
-    <div class="panel-title">🏦 Where to Park Your Money</div>
+    <div class="panel-title">Where to Park Your Money</div>
     <div id="invest-table"></div>
   </div>
-
-  <!-- Tax Saving -->
   <div class="panel">
-    <div class="panel-title">🧾 Tax Saving Tips (India)</div>
+    <div class="panel-title">Tax Saving Tips (India)</div>
     <div id="tax-tips"></div>
   </div>
-
 </div>
 </div>
 
-<!-- ===== SETTINGS MODAL ===== -->
-<div id="modal-overlay">
+<!-- SETTINGS MODAL -->
+<div class="overlay" id="settings-overlay">
   <div class="modal">
-    <h2>⚙ Settings & Assumptions</h2>
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <div>
-        <label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">Your name (optional)</label>
-        <input type="text" id="m-name" value="Kartik" style="width:100%">
-      </div>
-      <div>
-        <label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">General inflation rate (%/year)</label>
-        <input type="number" id="m-inf-gen" value="6" style="width:100%">
-      </div>
-      <div>
-        <label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">Real estate inflation rate (%/year)</label>
-        <input type="number" id="m-inf-re" value="8" style="width:100%">
-      </div>
-      <div>
-        <label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">Medical inflation rate (%/year)</label>
-        <input type="number" id="m-inf-med" value="7" style="width:100%">
-      </div>
-      <div>
-        <label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">Expected SIP returns (%/year)</label>
-        <input type="number" id="m-sip-ret" value="10" style="width:100%">
-      </div>
-      <div>
-        <label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">House property price today (₹)</label>
-        <input type="number" id="m-house-price" value="7500000" style="width:100%">
-        <div style="font-size:10px;color:var(--t3);margin-top:3px">Good 2BHK in Bangalore today = ₹75L</div>
-      </div>
-      <div>
-        <label style="font-size:11px;color:var(--t3);display:block;margin-bottom:4px">Furnishing budget today (₹)</label>
-        <input type="number" id="m-furnish" value="800000" style="width:100%">
-      </div>
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <button class="btn-primary" onclick="applySettings()">Apply & Close</button>
-        <button class="btn-ghost" onclick="closeModal()">Cancel</button>
-      </div>
+    <h2>Settings and Assumptions</h2>
+    <div class="fg"><label>Dashboard title</label><input type="text" id="m-title"></div>
+    <div class="fg"><label>General inflation rate (% per year)</label><input type="number" id="m-inf-gen"></div>
+    <div class="fg"><label>Real estate inflation rate (% per year)</label><input type="number" id="m-inf-re"></div>
+    <div class="fg"><label>Medical inflation rate (% per year)</label><input type="number" id="m-inf-med"></div>
+    <div class="fg"><label>Expected SIP returns (% per year)</label><input type="number" id="m-sip-ret"></div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn-primary" onclick="applySettings()">Apply and Close</button>
+      <button class="btn-ghost" onclick="closeOverlay('settings-overlay')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- GOAL MODAL -->
+<div class="overlay" id="goal-overlay">
+  <div class="modal">
+    <h2 id="goal-modal-title">Add New Goal</h2>
+    <div class="frow">
+      <div class="fg" style="flex:0 0 75px"><label>Icon</label><input type="text" id="ng-icon" style="font-size:18px;text-align:center"></div>
+      <div class="fg" style="flex:1"><label>Goal Name</label><input type="text" id="ng-name" placeholder="e.g. Emergency Fund"></div>
+      <div class="fg" style="flex:0 0 75px"><label>Color</label><input type="color" id="ng-color" style="height:36px;padding:2px;cursor:pointer"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>Category</label><input type="text" id="ng-cat" placeholder="Tech, Housing, Family..."></div>
+      <div class="fg" style="flex:0 0 90px"><label>Priority</label><input type="number" id="ng-priority"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>Today's Value (Rs.)</label><input type="number" id="ng-val" placeholder="0"></div>
+      <div class="fg"><label>Already Saved (Rs.)</label><input type="number" id="ng-saved" placeholder="0"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>Years to Goal</label><input type="number" id="ng-years" step="0.5"></div>
+      <div class="fg"><label>Inflation % per year</label><input type="number" id="ng-infl"></div>
+    </div>
+    <div class="fg"><label>Monthly saving (Rs.) — leave 0 to auto-calculate</label><input type="number" id="ng-monthly" placeholder="0"></div>
+    <div class="fg"><label>Note</label><input type="text" id="ng-note" placeholder="Short description"></div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn-primary" onclick="saveGoalModal()">Save Goal</button>
+      <button class="btn-ghost" onclick="closeOverlay('goal-overlay')">Cancel</button>
+      <button class="btn-danger" id="ng-delete-btn" style="display:none;margin-left:auto" onclick="deleteGoalFromModal()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- SOURCE MODAL -->
+<div class="overlay" id="source-overlay">
+  <div class="modal">
+    <h2 id="source-modal-title">Add Savings Source</h2>
+    <div class="frow">
+      <div class="fg" style="flex:0 0 75px"><label>Icon</label><input type="text" id="ns-icon" style="font-size:18px;text-align:center"></div>
+      <div class="fg" style="flex:1"><label>Source Name</label><input type="text" id="ns-name" placeholder="e.g. SBI FD, EPF, Gold ETF"></div>
+      <div class="fg" style="flex:0 0 75px"><label>Color</label><input type="color" id="ns-color" style="height:36px;padding:2px;cursor:pointer"></div>
+    </div>
+    <div class="fg"><label>Current Amount (Rs.)</label><input type="number" id="ns-amount" placeholder="0"></div>
+    <div class="fg"><label>Note (optional)</label><input type="text" id="ns-note" placeholder="e.g. 7.5% p.a., matures Dec 2026"></div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn-primary" id="ns-save-btn" onclick="saveSourceModal()">Add Source</button>
+      <button class="btn-ghost" onclick="closeOverlay('source-overlay')">Cancel</button>
+      <button class="btn-danger" id="ns-delete-btn" style="display:none;margin-left:auto" onclick="deleteSourceFromModal()">Delete</button>
     </div>
   </div>
 </div>
 
 <script>
-// ============================
-// DATA & STATE
-// ============================
-const APP_KEY = 'kartik_budget_v1';
-
+const APP_KEY = 'budget_dash_v3';
 const defaultState = {
-  ctc: 50000, takeHomePct: 80, expenses: 10000,
-  cashSavings: 73000, mutualFunds: 77000,
-  infGen: 6, infRE: 8, infMed: 7, sipRet: 10,
-  housePrice: 7500000, furnishing: 800000,
-  goals: [
-    {id:1,icon:'🏠',name:'House Down Payment',cat:'Housing',color:'#f59e0b',
-     todayVal:0,inflRate:8,years:6.5,saved:0,priority:1,
-     note:'20% down + 6.5% stamp/reg + furnishing. Full property ~₹75L Bangalore. Take home loan for the rest.',
-     isHouse:true},
-    {id:2,icon:'💳',name:'Family Debts',cat:'Debt',color:'#ef4444',
-     todayVal:600000,inflRate:0,years:4.5,saved:0,priority:2,
-     note:'₹5–7L owed to family & others. No inflation — clear ASAP to free up cash flow.'},
-    {id:3,icon:'🖥️',name:'Workstation Setup',cat:'Tech',color:'#6366f1',
-     todayVal:48000,inflRate:5,years:1,saved:0,priority:3,
-     note:'Sit-stand desk ₹20k + mech keyboard ₹5k + mouse ₹3k + monitor ₹15k + accessories ₹5k'},
-    {id:4,icon:'💻',name:'Laptop',cat:'Tech',color:'#8b5cf6',
-     todayVal:42000,inflRate:3,years:2,saved:0,priority:4,
-     note:'Good performance laptop for work & personal (₹35–50k range)'},
-    {id:5,icon:'📱',name:'Smartphone',cat:'Tech',color:'#06b6d4',
-     todayVal:40000,inflRate:3,years:3,saved:0,priority:5,
-     note:'Mid-premium smartphone upgrade'},
-    {id:6,icon:'🔨',name:'Gurgaon House Renovation',cat:'Family',color:'#10b981',
-     todayVal:600000,inflRate:6,years:7.5,saved:0,priority:6,
-     note:'Full 2BHK renovation in Gurgaon. Flooring, walls, bathroom, kitchen.'},
-    {id:7,icon:'🔧',name:'Ludhiana House Renovation',cat:'Family',color:'#84cc16',
-     todayVal:600000,inflRate:6,years:8,saved:0,priority:7,
-     note:'Full 2BHK renovation in Ludhiana. Similar scope.'},
-    {id:8,icon:'🏏',name:'Sports Business Corpus',cat:'Business',color:'#f97316',
-     todayVal:3200000,inflRate:6,years:10,saved:0,priority:8,
-     note:'2 bowling machines (₹4L each) + 4 cricket nets (₹1.5L each) + snooker + TT + setup/deposit ₹15L = ₹32L today'}
+  appTitle:'Your Budget Dashboard',
+  ctc:50000, takeHomePct:80, expenses:10000,
+  infGen:6, infRE:8, infMed:7, sipRet:10,
+  savingSources:[
+    {id:1, icon:'🏦', name:'Cash + FD Savings', amount:73000, note:'Liquid savings and fixed deposits', color:'#10b981'},
+    {id:2, icon:'📈', name:'Mutual Funds / SIP', amount:77000, note:'Equity and debt mutual funds', color:'#6366f1'},
   ],
-  monthlyLog: [],
-  notes: [],
-  lastSaved: null
+  goals:[
+    {id:1, icon:'🖥️', name:'Workstation Setup', cat:'Tech', color:'#6366f1', todayVal:48000, inflRate:5, years:1, saved:0, priority:1, monthlyAmt:4200, note:'Desk + keyboard + mouse + monitor + accessories'},
+    {id:2, icon:'💻', name:'Laptop', cat:'Tech', color:'#8b5cf6', todayVal:42000, inflRate:3, years:2, saved:0, priority:2, monthlyAmt:1800, note:'Good performance laptop'},
+    {id:3, icon:'📱', name:'Smartphone', cat:'Tech', color:'#06b6d4', todayVal:40000, inflRate:3, years:3, saved:0, priority:3, monthlyAmt:1300, note:'Mid-premium smartphone upgrade'},
+    {id:4, icon:'🏠', name:'House Down Payment', cat:'Housing', color:'#f59e0b', todayVal:1500000, inflRate:8, years:6.5, saved:0, priority:4, monthlyAmt:12000, note:'20% down + stamp duty + registration + furnishing'},
+    {id:5, icon:'👨‍👩‍👦', name:'Parents Monthly Support', cat:'Family', color:'#8b5cf6', todayVal:60000, inflRate:6, years:1, saved:0, priority:5, monthlyAmt:5000, note:'Rs. 5,000/month recurring support'},
+  ],
+  phases:[
+    {id:1, name:'Phase 1 (Year 0-2)', color:'#f59e0b', sub:'Salary ~Rs.40-52k take-home', rows:[
+      {id:1,name:'Workstation',amt:4200,note:'Done ~11 months'},
+      {id:2,name:'Laptop',amt:1800,note:'Done ~2 years'},
+      {id:3,name:'Phone',amt:1300,note:'Done ~3 years'},
+      {id:4,name:'House Fund SIP',amt:8000,note:'Index fund/FD'},
+      {id:5,name:'Parents Support',amt:5000,note:'Monthly transfer'},
+    ]},
+    {id:2, name:'Phase 2 (Year 3-6)', color:'#10b981', sub:'Salary ~Rs.55-70k take-home', rows:[
+      {id:1,name:'House Fund (primary)',amt:22000,note:'Aggressive SIP'},
+      {id:2,name:'Parents Support',amt:7000,note:'Increased with time'},
+      {id:3,name:'Long-term Wealth SIP',amt:5000,note:'Index fund corpus'},
+    ]},
+  ],
+  monthlyLog:[], notes:[], lastSaved:null
 };
 
-let state = loadState();
-let charts = {};
-
-function loadState(){
+let state = (function(){
   try{
     const s = localStorage.getItem(APP_KEY);
-    if(s) return Object.assign({},defaultState,JSON.parse(s));
+    if(s){ const p=JSON.parse(s); return {...defaultState,...p,savingSources:p.savingSources||defaultState.savingSources,goals:p.goals||defaultState.goals,phases:p.phases||defaultState.phases,monthlyLog:p.monthlyLog||[],notes:p.notes||[]}; }
   }catch(e){}
   return JSON.parse(JSON.stringify(defaultState));
-}
+})();
+
+let charts={}, activeTab='overview', editingGoalId=null, editingSourceId=null;
 
 function saveAll(){
   state.lastSaved = new Date().toLocaleString('en-IN');
   localStorage.setItem(APP_KEY, JSON.stringify(state));
-  document.getElementById('save-badge').textContent = '● Saved '+state.lastSaved.slice(0,16);
-  setTimeout(()=>{document.getElementById('save-badge').textContent='● All saved'},3000);
+  const b=document.getElementById('save-badge');
+  b.textContent='Saved '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  b.style.color='var(--green)';
+  setTimeout(()=>{b.textContent='All saved';b.style.color='var(--green)';},3000);
 }
+function markUnsaved(){ const b=document.getElementById('save-badge'); b.textContent='Unsaved changes'; b.style.color='#f59e0b'; }
 
-// ============================
-// FORMATTING
-// ============================
+setInterval(saveAll,180000);
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();saveAll();}});
+
 function fINR(n){
-  n=Math.round(n);
-  if(n>=10000000) return '₹'+(n/10000000).toFixed(2)+' Cr';
-  if(n>=100000) return '₹'+(n/100000).toFixed(2)+' L';
-  if(n>=1000) return '₹'+(n/1000).toFixed(1)+'k';
-  return '₹'+n.toLocaleString('en-IN');
+  n=Math.round(n||0);
+  if(n>=10000000) return 'Rs.'+(n/10000000).toFixed(2)+' Cr';
+  if(n>=100000)   return 'Rs.'+(n/100000).toFixed(2)+' L';
+  if(n>=1000)     return 'Rs.'+(n/1000).toFixed(1)+'k';
+  return 'Rs.'+n.toLocaleString('en-IN');
 }
-function fINRFull(n){
-  return '₹'+Math.round(n).toLocaleString('en-IN');
-}
-function infAdj(amt,rate,years){return amt*Math.pow(1+rate/100,years);}
-function monthlyNeeded(target,years){return target/(years*12);}
+function infAdj(a,r,y){ return a*Math.pow(1+r/100,y); }
+function destroyChart(id){ if(charts[id]){charts[id].destroy();delete charts[id];} }
 
-// ============================
-// COMPUTED VALUES
-// ============================
 function computed(){
-  const c = state;
-  const takeHome = c.ctc*(c.takeHomePct/100);
-  const avail = takeHome - c.expenses;
-  const totalCurrentSavings = c.cashSavings + c.mutualFunds;
-
-  const goals = c.goals.map(g=>{
-    let target;
-    if(g.isHouse){
-      const propFuture = infAdj(c.housePrice, c.infRE, g.years);
-      const downPayment = propFuture*0.20;
-      const stampDuty = propFuture*0.065;
-      const furnFuture = infAdj(c.furnishing, c.infGen, g.years);
-      target = downPayment + stampDuty + furnFuture;
-    } else {
-      target = infAdj(g.todayVal, g.inflRate, g.years);
-    }
-    const remaining = Math.max(0, target - g.saved);
-    const monthly = monthlyNeeded(remaining, g.years);
-    const progress = target > 0 ? Math.min(100, (g.saved/target)*100) : 0;
-    return {...g, target, remaining, monthly, progress};
+  const takeHome=state.ctc*(state.takeHomePct/100);
+  const avail=takeHome-state.expenses;
+  const totalSaved=state.savingSources.reduce((s,x)=>s+(x.amount||0),0);
+  const goals=state.goals.map(g=>{
+    const target=infAdj(g.todayVal||0,g.inflRate||0,g.years||1);
+    const remaining=Math.max(0,target-(g.saved||0));
+    const monthly=g.monthlyAmt||(g.years>0?remaining/(g.years*12):0);
+    const progress=target>0?Math.min(100,(g.saved||0)/target*100):0;
+    return {...g,target,remaining,monthly,progress};
   });
-
-  // Recurring
-  const medMonthly = infAdj(75000/12, c.infMed, 3);
-  const parentsMonthly = infAdj(5000, c.infGen, 3);
-
-  // Total
-  const totalNeeded = goals.reduce((s,g)=>s+g.target,0);
-  const totalMonthlyNeeded = goals.reduce((s,g)=>s+g.monthly,0);
-
-  // House breakdown
-  const propFuture = infAdj(c.housePrice, c.infRE, 6.5);
-  const houseBreakdown = {
-    propToday: c.housePrice,
-    propFuture,
-    downPayment: propFuture*0.20,
-    stampDuty: propFuture*0.065,
-    furnToday: c.furnishing,
-    furnFuture: infAdj(c.furnishing, c.infGen, 6.5),
-    totalSavingsNeeded: propFuture*0.20 + propFuture*0.065 + infAdj(c.furnishing,c.infGen,6.5),
-    loanAmount: propFuture*0.80,
-    emi: propFuture*0.80*0.00874
-  };
-
-  return {takeHome, avail, totalCurrentSavings, goals, totalNeeded, totalMonthlyNeeded, medMonthly, parentsMonthly, houseBreakdown};
+  return {takeHome,avail,totalSaved,goals};
 }
 
-// ============================
-// TAB SWITCHING
-// ============================
-function switchTab(name){
+function syncBar(){
+  document.getElementById('s-ctc').value=state.ctc;
+  document.getElementById('s-th').value=state.takeHomePct;
+  document.getElementById('s-exp').value=state.expenses;
+  updateAvail();
+}
+function updateAvail(){
+  const c=computed(), el=document.getElementById('avail-disp');
+  el.value=fINR(c.avail);
+  el.style.color=c.avail>=0?'var(--green)':'var(--red)';
+}
+function recalc(){
+  state.ctc=+document.getElementById('s-ctc').value||0;
+  state.takeHomePct=+document.getElementById('s-th').value||80;
+  state.expenses=+document.getElementById('s-exp').value||0;
+  updateAvail(); markUnsaved(); renderActive();
+}
+
+function switchTab(name,btn){
+  activeTab=name;
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
-  event.target.classList.add('active');
+  if(btn) btn.classList.add('active');
   renderTab(name);
 }
+function renderActive(){ renderTab(activeTab); }
+function renderTab(n){ if(n==='overview')renderOverview(); else if(n==='goals')renderGoals(); else if(n==='savings')renderSavings(); else if(n==='monthly')renderMonthly(); else if(n==='tips')renderTips(); }
 
-// ============================
-// SETTINGS BAR
-// ============================
-function syncSettingsBar(){
-  document.getElementById('s-ctc').value = state.ctc;
-  document.getElementById('s-th').value = state.takeHomePct;
-  document.getElementById('s-exp').value = state.expenses;
-  document.getElementById('s-cash').value = state.cashSavings;
-  document.getElementById('s-mf').value = state.mutualFunds;
-}
+// OVERLAYS
+function openOverlay(id){ document.getElementById(id).classList.add('open'); }
+function closeOverlay(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(el=>el.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
 
-function recalc(){
-  state.ctc = +document.getElementById('s-ctc').value||0;
-  state.takeHomePct = +document.getElementById('s-th').value||80;
-  state.expenses = +document.getElementById('s-exp').value||0;
-  state.cashSavings = +document.getElementById('s-cash').value||0;
-  state.mutualFunds = +document.getElementById('s-mf').value||0;
-  const c = computed();
-  document.getElementById('avail-disp').textContent = fINR(c.avail);
-  document.getElementById('avail-disp').style.color = c.avail>0?'var(--green)':'var(--red)';
-  renderActive();
-  markUnsaved();
-}
-
-function markUnsaved(){
-  document.getElementById('save-badge').textContent = '● Unsaved changes';
-  document.getElementById('save-badge').style.color='#f59e0b';
-}
-
-// ============================
-// RENDER OVERVIEW
-// ============================
+// OVERVIEW
 function renderOverview(){
-  const c = computed();
+  const c=computed(), totalTarget=c.goals.reduce((s,g)=>s+g.target,0);
+  document.getElementById('summary-cards').innerHTML=[
+    {icon:'💰',label:'Total Saved',val:fINR(c.totalSaved),sub:'Across all sources',color:'var(--green)'},
+    {icon:'🎯',label:'Total Goals Target',val:fINR(totalTarget),sub:'Inflation-adjusted',color:'var(--accent)'},
+    {icon:'📈',label:'Monthly Saveable',val:fINR(c.avail),sub:'Take-home minus expenses',color:c.avail>=0?'var(--blue)':'var(--red)'},
+    {icon:'⏳',label:'Goals Count',val:state.goals.length,sub:'Active financial goals',color:'var(--orange)'},
+  ].map(card=>`<div class="stat-card" style="border-left-color:${card.color}"><div class="icon">${card.icon}</div><div class="label">${card.label}</div><div class="value" style="color:${card.color}">${card.val}</div><div class="sub">${card.sub}</div></div>`).join('');
 
-  // Summary cards
-  const cards = [
-    {icon:'💰',label:'Total Savings Now',val:fINR(c.totalCurrentSavings),sub:'Cash/FD + Mutual Funds',color:'var(--green)'},
-    {icon:'🎯',label:'Total Goals Target',val:fINR(c.totalNeeded),sub:'Inflation-adjusted, all goals',color:'var(--accent)'},
-    {icon:'📈',label:'Monthly Saveable',val:fINR(c.avail),sub:'Take-home minus expenses',color:'var(--blue)'},
-    {icon:'⏳',label:'Biggest Goal',val:'House DP',sub:fINR(c.goals.find(g=>g.isHouse)?.target||0)+' needed',color:'var(--orange)'},
-  ];
-  document.getElementById('summary-cards').innerHTML = cards.map(card=>`
-    <div class="stat-card" style="border-left-color:${card.color}">
-      <div class="icon">${card.icon}</div>
-      <div class="label">${card.label}</div>
-      <div class="value" style="color:${card.color}">${card.val}</div>
-      <div class="sub">${card.sub}</div>
-    </div>`).join('');
-
-  // Priority goals list
-  const sorted = [...c.goals].sort((a,b)=>a.priority-b.priority).slice(0,7);
-  document.getElementById('priority-goals-list').innerHTML = sorted.map(g=>`
+  const sorted=[...c.goals].sort((a,b)=>a.priority-b.priority);
+  document.getElementById('priority-goals-list').innerHTML=sorted.length?sorted.map(g=>`
     <div style="margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;margin-bottom:3px">
         <span style="font-size:12px">${g.icon} ${g.name}</span>
         <span style="font-size:11px;color:${g.color};font-weight:600">${fINR(g.target)}</span>
       </div>
-      <div class="progress-wrap">
-        <div class="progress-fill" style="width:${g.progress}%;background:${g.color}"></div>
-      </div>
+      <div class="progress-wrap"><div class="progress-fill" style="width:${g.progress}%;background:${g.color}"></div></div>
       <div style="display:flex;justify-content:space-between;margin-top:2px">
-        <span style="font-size:10px;color:var(--t3)">${g.progress.toFixed(1)}% · ${g.years}yr</span>
+        <span style="font-size:10px;color:var(--t3)">${g.progress.toFixed(1)}% &middot; ${g.years}yr</span>
         <span style="font-size:10px;color:var(--t3)">${fINR(g.monthly)}/mo needed</span>
       </div>
-    </div>`).join('');
+    </div>`).join(''):'<div style="color:var(--t3);font-size:12px">No goals yet. Add them in the Goals tab.</div>';
 
-  // Pie chart
-  const topGoals = sorted.slice(0,7);
   destroyChart('pieChart');
-  charts['pieChart'] = new Chart(document.getElementById('pieChart'),{
-    type:'doughnut',
-    data:{
-      labels: topGoals.map(g=>g.name.split(' ').slice(0,2).join(' ')),
-      datasets:[{data: topGoals.map(g=>Math.round(g.monthly)), backgroundColor: topGoals.map(g=>g.color+'cc'), borderColor: topGoals.map(g=>g.color), borderWidth:1}]
-    },
-    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>`₹${ctx.raw.toLocaleString('en-IN')}/mo`}}}}
-  });
-  document.getElementById('pie-legend').innerHTML = topGoals.map(g=>`
-    <div style="display:flex;align-items:center;gap:4px">
-      <div style="width:8px;height:8px;border-radius:2px;background:${g.color}"></div>
-      <span style="font-size:10px;color:var(--t2)">${g.name.split(' ')[0]}</span>
-    </div>`).join('');
-
-  // Timeline chart
-  const byTime = [...c.goals].sort((a,b)=>a.years-b.years);
+  if(sorted.length){
+    charts['pieChart']=new Chart(document.getElementById('pieChart'),{type:'doughnut',data:{labels:sorted.map(g=>g.name.split(' ').slice(0,2).join(' ')),datasets:[{data:sorted.map(g=>Math.round(g.monthly)),backgroundColor:sorted.map(g=>g.color+'cc'),borderColor:sorted.map(g=>g.color),borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>fINR(ctx.raw)+'/mo'}}}}});
+    document.getElementById('pie-legend').innerHTML=sorted.map(g=>`<div style="display:flex;align-items:center;gap:4px"><div style="width:8px;height:8px;border-radius:2px;background:${g.color}"></div><span style="font-size:10px;color:var(--t2)">${g.name.split(' ')[0]}</span></div>`).join('');
+  }
+  const byTime=[...c.goals].sort((a,b)=>a.years-b.years);
   destroyChart('timelineChart');
-  charts['timelineChart'] = new Chart(document.getElementById('timelineChart'),{
-    type:'bar',
-    data:{
-      labels: byTime.map(g=>g.icon+' '+g.name.split(' ').slice(0,2).join(' ')),
-      datasets:[{label:'Years',data:byTime.map(g=>g.years),backgroundColor:byTime.map(g=>g.color+'99'),borderColor:byTime.map(g=>g.color),borderWidth:1,borderRadius:4}]
-    },
-    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>`${ctx.raw} years`}}},scales:{x:{ticks:{color:'#64748b',callback:(v)=>v+'yr'},grid:{color:'#2a2a3a'}},y:{ticks:{color:'#94a3b8',font:{size:10}},grid:{display:false}}}}
-  });
+  if(byTime.length) charts['timelineChart']=new Chart(document.getElementById('timelineChart'),{type:'bar',data:{labels:byTime.map(g=>g.icon+' '+g.name.split(' ').slice(0,2).join(' ')),datasets:[{label:'Years',data:byTime.map(g=>g.years),backgroundColor:byTime.map(g=>g.color+'99'),borderColor:byTime.map(g=>g.color),borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>ctx.raw+' years'}}},scales:{x:{ticks:{color:'#64748b',callback:(v)=>v+'yr'},grid:{color:'#2a2a3a'}},y:{ticks:{color:'#94a3b8',font:{size:10}},grid:{display:false}}}}});
 
-  // Projection chart
-  const months = Array.from({length:121},(_,i)=>i);
-  const sipRet = state.sipRet/100;
-  let corpus = state.cashSavings + state.mutualFunds;
-  const projData = months.map(m=>{
-    corpus = corpus*(1+sipRet/12) + 30000;
-    return Math.round(corpus/100000);
-  });
-  const labels = months.filter(m=>m%12===0).map(m=>m===0?'Now':`Yr ${m/12}`);
-  const projFiltered = months.filter(m=>m%12===0).map(m=>{
-    let c2 = state.cashSavings+state.mutualFunds;
-    for(let i=0;i<m;i++) c2=c2*(1+sipRet/12)+30000;
-    return Math.round(c2/100000);
-  });
+  const sipRet=state.sipRet/100, initCorpus=c.totalSaved, ms=Math.max(0,c.avail);
+  document.getElementById('proj-sub').textContent='If you save '+fINR(ms)+'/month with '+state.sipRet+'% annual returns';
+  const pl=[],pd=[];
+  for(let yr=0;yr<=10;yr++){let cp=initCorpus;for(let m=0;m<yr*12;m++)cp=cp*(1+sipRet/12)+ms;pl.push(yr===0?'Now':'Yr '+yr);pd.push(Math.round(cp/100000));}
   destroyChart('projChart');
-  charts['projChart'] = new Chart(document.getElementById('projChart'),{
-    type:'line',
-    data:{labels,datasets:[{label:'Corpus (₹L)',data:projFiltered,borderColor:'#f59e0b',backgroundColor:'#f59e0b22',fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:'#f59e0b'}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>`₹${ctx.raw}L`}}},scales:{x:{ticks:{color:'#64748b'},grid:{color:'#2a2a3a'}},y:{ticks:{color:'#64748b',callback:(v)=>'₹'+v+'L'},grid:{color:'#2a2a3a'}}}}
-  });
+  charts['projChart']=new Chart(document.getElementById('projChart'),{type:'line',data:{labels:pl,datasets:[{label:'Corpus',data:pd,borderColor:'#f59e0b',backgroundColor:'#f59e0b22',fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:'#f59e0b'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>'Rs.'+ctx.raw+'L'}}},scales:{x:{ticks:{color:'#64748b'},grid:{color:'#2a2a3a'}},y:{ticks:{color:'#64748b',callback:(v)=>'Rs.'+v+'L'},grid:{color:'#2a2a3a'}}}}});
 }
 
-// ============================
-// RENDER GOALS
-// ============================
+// GOALS
 function renderGoals(){
-  const c = computed();
-
-  // House breakdown
-  const hb = c.houseBreakdown;
-  document.getElementById('house-breakdown').innerHTML = [
-    {l:'Property today',v:fINR(hb.propToday),s:'~75L Bangalore 2BHK'},
-    {l:'Property in 6.5yr',v:fINR(hb.propFuture),s:'8% real estate inflation'},
-    {l:'Down payment (20%)',v:fINR(hb.downPayment),s:'You save this'},
-    {l:'Stamp + Registration',v:fINR(hb.stampDuty),s:'~6.5% of property'},
-    {l:'Furnishing (6.5yr)',v:fINR(hb.furnFuture),s:'₹8L today → inflated'},
-    {l:'Total to save',v:fINR(hb.totalSavingsNeeded),s:'DP + fees + furnishing',hi:true},
-    {l:'Home loan amount',v:fINR(hb.loanAmount),s:'80% of property'},
-    {l:'EMI (20yr@8.5%)',v:fINR(hb.emi)+'/mo',s:'Need ₹2L+ salary by yr7'},
-  ].map(item=>`
-    <div class="house-item ${item.hi?'highlight':''}">
-      <div class="hl">${item.l}</div>
-      <div class="hv" style="color:${item.hi?'var(--accent)':'var(--t1)'}">${item.v}</div>
-      <div class="hs">${item.s}</div>
-    </div>`).join('');
-
-  // All goals
-  const sorted = [...c.goals].sort((a,b)=>a.priority-b.priority);
-  document.getElementById('all-goals-list').innerHTML = sorted.map(g=>`
-    <div class="goal-card" id="gc-${g.id}">
+  const c=computed();
+  const par=state.goals.find(g=>g.cat==='Family'&&g.name.toLowerCase().includes('parent'));
+  if(par){
+    const m=par.monthlyAmt||5000;
+    document.getElementById('parents-display').innerHTML=`<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">${[['Per Month',fINR(m)],['Per Year',fINR(m*12)],['In 5yrs (inflated)',fINR(infAdj(m,state.infGen,5))+'/mo']].map(([l,v])=>`<div style="background:var(--bg3);border-radius:8px;padding:8px 14px;flex:1;min-width:90px"><div style="font-size:9px;color:var(--t3)">${l}</div><div style="font-size:16px;font-weight:700;color:var(--purple);font-family:'Syne',sans-serif">${v}</div></div>`).join('')}</div>`;
+  } else {
+    document.getElementById('parents-display').innerHTML='<div style="font-size:11px;color:var(--t3);margin-top:4px">Not added yet. Click Add / Edit above.</div>';
+  }
+  const sorted=[...c.goals].sort((a,b)=>a.priority-b.priority);
+  document.getElementById('all-goals-list').innerHTML=sorted.length?sorted.map(g=>`
+    <div class="goal-card">
       <div class="goal-header">
         <div>
-          <div style="display:flex;align-items:center;gap:6px">
-            <span style="font-size:18px">${g.icon}</span>
-            <div>
-              <div class="goal-name">${g.name}</div>
-              <div class="goal-meta">${g.cat} · Priority #${g.priority} · ${g.years} years · ${g.inflRate}% inflation</div>
-            </div>
-          </div>
-          <div class="goal-note" style="margin-top:6px">${g.note||''}</div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="font-size:20px">${g.icon}</span><div><div class="goal-name">${g.name}</div><div class="goal-meta">${g.cat} &middot; Priority #${g.priority} &middot; ${g.years}yr &middot; ${g.inflRate}% inflation</div></div></div>
+          ${g.note?`<div class="goal-note" style="margin-top:6px">${g.note}</div>`:''}
         </div>
         <div style="text-align:right;flex-shrink:0">
-          <div style="font-size:10px;color:var(--t3)">Inflation-adj. target</div>
+          <div style="font-size:10px;color:var(--t3)">Target (inflation-adjusted)</div>
           <div style="font-size:18px;font-weight:700;font-family:'Syne',sans-serif;color:${g.color}">${fINR(g.target)}</div>
           <div style="font-size:10px;color:var(--orange)">${fINR(g.monthly)}/month needed</div>
+          <div style="display:flex;gap:6px;margin-top:6px;justify-content:flex-end">
+            <button class="btn-ghost" style="font-size:11px;padding:4px 10px" onclick="openGoalModal(${g.id})">Edit</button>
+            <button class="btn-danger" onclick="deleteGoalDirect(${g.id})">Delete</button>
+          </div>
         </div>
       </div>
-      <div class="progress-wrap" style="height:8px">
-        <div class="progress-fill" style="width:${g.progress}%;background:linear-gradient(90deg,${g.color}88,${g.color})"></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:3px">
-        <span>${fINR(g.saved)} saved of ${fINR(g.target)} (${g.progress.toFixed(1)}%)</span>
-        <span>Remaining: ${fINR(g.remaining)}</span>
-      </div>
+      <div class="progress-wrap" style="height:8px"><div class="progress-fill" style="width:${g.progress}%;background:linear-gradient(90deg,${g.color}88,${g.color})"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:3px"><span>${fINR(g.saved)} saved of ${fINR(g.target)} (${g.progress.toFixed(1)}%)</span><span>Remaining: ${fINR(g.remaining)}</span></div>
       <div class="goal-inputs">
-        <div class="fi"><label>Saved (₹)</label>
-          <input type="number" value="${g.saved}" onchange="updateGoalSaved(${g.id},this.value)"></div>
-        <div class="fi"><label>Today's value (₹)</label>
-          <input type="number" value="${g.todayVal}" onchange="updateGoalField(${g.id},'todayVal',this.value)" ${g.isHouse?'disabled':''}></div>
-        <div class="fi"><label>Years to goal</label>
-          <input type="number" value="${g.years}" onchange="updateGoalField(${g.id},'years',this.value)" style="width:70px"></div>
-        <div class="fi"><label>Inflation %</label>
-          <input type="number" value="${g.inflRate}" onchange="updateGoalField(${g.id},'inflRate',this.value)" style="width:60px"></div>
-        <div class="fi"><label>Priority</label>
-          <input type="number" value="${g.priority}" onchange="updateGoalField(${g.id},'priority',this.value)" style="width:60px"></div>
+        <div class="fi"><label>Saved (Rs.)</label><input type="number" value="${g.saved}" onchange="updateGoalField(${g.id},'saved',this.value)"></div>
+        <div class="fi"><label>Today value (Rs.)</label><input type="number" value="${g.todayVal}" onchange="updateGoalField(${g.id},'todayVal',this.value)"></div>
+        <div class="fi"><label>Years</label><input type="number" value="${g.years}" step="0.5" onchange="updateGoalField(${g.id},'years',this.value)" style="width:70px"></div>
+        <div class="fi"><label>Inflation %</label><input type="number" value="${g.inflRate}" onchange="updateGoalField(${g.id},'inflRate',this.value)" style="width:60px"></div>
+        <div class="fi"><label>Monthly Rs.</label><input type="number" value="${g.monthlyAmt||0}" onchange="updateGoalField(${g.id},'monthlyAmt',this.value)" style="width:80px"></div>
+        <div class="fi"><label>Priority</label><input type="number" value="${g.priority}" onchange="updateGoalField(${g.id},'priority',this.value)" style="width:60px"></div>
       </div>
-    </div>`).join('');
-
-  // Recurring
-  const medM = c.medMonthly;
-  const parM = c.parentsMonthly;
-  document.getElementById('recurring-list').innerHTML = `
-    <div class="panel" style="border-color:#ec489944">
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-        <span style="font-size:20px">💊</span>
-        <div>
-          <div style="font-family:'Syne',sans-serif;font-size:13px">Medical Expenses</div>
-          <div style="font-size:10px;color:var(--t3)">Starts Year 3 · ₹75k/year today → inflated at 7%</div>
-        </div>
-      </div>
-      <div style="font-size:11px;color:var(--t2);margin-bottom:8px">₹5k/month medicines + ₹9k/year tests + ₹6k misc</div>
-      <div style="display:flex;gap:16px">
-        <div><div style="font-size:9px;color:var(--t3)">By Year 3</div><div style="font-size:16px;color:#ec4899;font-family:'Syne',sans-serif">${fINR(medM*12)}/yr</div></div>
-        <div><div style="font-size:9px;color:var(--t3)">Monthly</div><div style="font-size:16px;color:#ec4899;font-family:'Syne',sans-serif">${fINR(medM)}/mo</div></div>
-      </div>
-    </div>
-    <div class="panel" style="border-color:#14b8a644">
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-        <span style="font-size:20px">👨‍👩‍👦</span>
-        <div>
-          <div style="font-family:'Syne',sans-serif;font-size:13px">Parents Monthly Support</div>
-          <div style="font-size:10px;color:var(--t3)">Starts Year 3 · ₹5k/month today → inflated at 6%</div>
-        </div>
-      </div>
-      <div style="display:flex;gap:16px">
-        <div><div style="font-size:9px;color:var(--t3)">By Year 3</div><div style="font-size:16px;color:#14b8a6;font-family:'Syne',sans-serif">${fINR(parM)}/mo</div></div>
-        <div><div style="font-size:9px;color:var(--t3)">Annual</div><div style="font-size:16px;color:#14b8a6;font-family:'Syne',sans-serif">${fINR(parM*12)}/yr</div></div>
-      </div>
-    </div>`;
+    </div>`).join(''):'<div style="color:var(--t3);font-size:13px;text-align:center;padding:24px">No goals yet. Click + Add New Goal to start.</div>';
 }
+function updateGoalField(id,field,val){ state.goals=state.goals.map(g=>g.id===id?{...g,[field]:parseFloat(val)||0}:g); markUnsaved(); renderActive(); }
+function deleteGoalDirect(id){ if(!confirm('Delete this goal?'))return; state.goals=state.goals.filter(g=>g.id!==id); markUnsaved(); renderActive(); }
 
-// ============================
-// RENDER MONTHLY
-// ============================
-function renderMonthly(){
-  const c = computed();
-
-  // Phase plans
-  const phase1 = [
-    {name:'🖥️ Workstation', amt:4200, note:'Done in ~11 months'},
-    {name:'💳 Debts', amt:12000, note:'Clear in 4 years'},
-    {name:'🏠 House Fund SIP', amt:8000, note:'Index fund/FD'},
-    {name:'💻 Laptop', amt:1800, note:'Done in ~2 years'},
-    {name:'📱 Phone', amt:1300, note:'Done in ~3 years'},
-    {name:'🏏 Business Seed', amt:2700, note:'Long-term SIP'},
-  ];
-  const phase1Total = phase1.reduce((s,p)=>s+p.amt,0);
-  document.getElementById('phase1-plan').innerHTML = phase1.map(p=>`
-    <div class="phase-row">
-      <div><div class="pname">${p.name}</div><div class="pnote">${p.note}</div></div>
-      <div class="pamt" style="color:var(--green)">₹${p.amt.toLocaleString('en-IN')}</div>
-    </div>`).join('')+`
-    <div class="phase-row" style="margin-top:6px">
-      <div class="pname" style="font-weight:600">Total Allocated</div>
-      <div class="pamt" style="color:var(--accent)">₹${phase1Total.toLocaleString('en-IN')}</div>
-    </div>
-    <div class="phase-row">
-      <div class="pname" style="color:var(--t3)">Emergency / Buffer</div>
-      <div class="pamt" style="color:var(--t3)">Remaining</div>
-    </div>`;
-
-  const phase2 = [
-    {name:'🏠 House Fund (primary)', amt:22000, note:'Aggressive SIP'},
-    {name:'💊 Medical', amt:Math.round(c.medMonthly), note:'From Year 3'},
-    {name:'👨‍👩‍👦 Parents Support', amt:Math.round(c.parentsMonthly), note:'From Year 3'},
-    {name:'🔨 Renovations Fund', amt:6000, note:'₹3k each house'},
-    {name:'🏏 Business Corpus', amt:8000, note:'SIP building'},
-  ];
-  const phase2Total = phase2.reduce((s,p)=>s+p.amt,0);
-  document.getElementById('phase2-plan').innerHTML = phase2.map(p=>`
-    <div class="phase-row">
-      <div><div class="pname">${p.name}</div><div class="pnote">${p.note}</div></div>
-      <div class="pamt" style="color:var(--green)">₹${p.amt.toLocaleString('en-IN')}</div>
-    </div>`).join('')+`
-    <div class="phase-row" style="margin-top:6px">
-      <div class="pname" style="font-weight:600">Total Allocated</div>
-      <div class="pamt" style="color:var(--accent)">₹${phase2Total.toLocaleString('en-IN')}</div>
-    </div>`;
-
-  // Log
-  renderLog();
-  renderNotes();
-  renderMonthlyChart();
-}
-
-function renderLog(){
-  const log = state.monthlyLog;
-  const tbody = document.getElementById('log-tbody');
-  document.getElementById('log-empty').style.display = log.length?'none':'block';
-  tbody.innerHTML = log.slice().reverse().map((e,i)=>`
-    <tr>
-      <td style="font-weight:500;color:var(--t1)">${e.month||'—'}</td>
-      <td style="color:var(--green)">${e.income?fINR(e.income):'—'}</td>
-      <td style="color:var(--accent);font-weight:600">${fINR(e.saved)}</td>
-      <td>${e.income&&e.saved?Math.round(e.saved/e.income*100)+'%':'—'}</td>
-      <td style="color:var(--t2)">${e.where||'—'}</td>
-      <td style="color:var(--t2)">${e.note||'—'}</td>
-      <td><button class="btn-danger" onclick="deleteLog(${log.length-1-i})">✕</button></td>
-    </tr>`).join('');
-
-  // Summary
-  const total = log.reduce((s,e)=>s+e.saved,0);
-  const avg = log.length?total/log.length:0;
-  const best = log.length?Math.max(...log.map(e=>e.saved)):0;
-  document.getElementById('log-summary').innerHTML = [
-    {l:'Total Saved (logged)',v:fINR(total),c:'var(--accent)'},
-    {l:'Monthly Average',v:fINR(avg),c:'var(--green)'},
-    {l:'Best Month',v:fINR(best),c:'var(--blue)'},
-    {l:'Months Logged',v:log.length,c:'var(--t2)'},
-  ].map(s=>`<div><div style="font-size:10px;color:var(--t3)">${s.l}</div><div style="font-size:16px;color:${s.c};font-weight:600;font-family:'Syne',sans-serif">${s.v}</div></div>`).join('');
-}
-
-function renderNotes(){
-  const notes = state.notes;
-  document.getElementById('notes-list').innerHTML = notes.length
-    ? notes.slice().reverse().map((n,i)=>`
-      <div class="note-item">
-        <div class="ntxt">${n.text}</div>
-        <div style="display:flex;align-items:center;gap:6px">
-          <span class="ndate">${n.date}</span>
-          <button class="btn-danger" onclick="deleteNote(${notes.length-1-i})">✕</button>
-        </div>
-      </div>`).join('')
-    : '<div style="color:var(--t3);font-size:12px">No notes yet. Press Enter or + to add.</div>';
-}
-
-function renderMonthlyChart(){
-  destroyChart('monthlyChart');
-  const log = state.monthlyLog.slice(-12);
-  if(!log.length){
-    charts['monthlyChart']=new Chart(document.getElementById('monthlyChart'),{type:'bar',data:{labels:['No data yet'],datasets:[{data:[0],backgroundColor:'#2a2a3a'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
-    return;
+function openGoalModal(idOrPreset){
+  editingGoalId=null;
+  document.getElementById('goal-modal-title').textContent='Add New Goal';
+  document.getElementById('ng-delete-btn').style.display='none';
+  if(idOrPreset==='parents'){
+    const ex=state.goals.find(g=>g.name.toLowerCase().includes('parent'));
+    if(ex){openGoalModal(ex.id);return;}
+    document.getElementById('ng-icon').value='👨‍👩‍👦';
+    document.getElementById('ng-color').value='#8b5cf6';
+    document.getElementById('ng-name').value='Parents Monthly Support';
+    document.getElementById('ng-cat').value='Family';
+    document.getElementById('ng-val').value=60000;
+    document.getElementById('ng-saved').value=0;
+    document.getElementById('ng-years').value=1;
+    document.getElementById('ng-infl').value=6;
+    document.getElementById('ng-monthly').value=5000;
+    document.getElementById('ng-priority').value=state.goals.length+1;
+    document.getElementById('ng-note').value='Rs. 5,000/month recurring support for parents';
+  } else if(typeof idOrPreset==='number'){
+    const g=state.goals.find(g=>g.id===idOrPreset);
+    if(!g)return;
+    editingGoalId=idOrPreset;
+    document.getElementById('goal-modal-title').textContent='Edit Goal';
+    document.getElementById('ng-delete-btn').style.display='inline-block';
+    document.getElementById('ng-icon').value=g.icon;
+    document.getElementById('ng-color').value=g.color||'#f59e0b';
+    document.getElementById('ng-name').value=g.name;
+    document.getElementById('ng-cat').value=g.cat||'';
+    document.getElementById('ng-val').value=g.todayVal||0;
+    document.getElementById('ng-saved').value=g.saved||0;
+    document.getElementById('ng-years').value=g.years||3;
+    document.getElementById('ng-infl').value=g.inflRate||6;
+    document.getElementById('ng-monthly').value=g.monthlyAmt||0;
+    document.getElementById('ng-priority').value=g.priority||1;
+    document.getElementById('ng-note').value=g.note||'';
+  } else {
+    document.getElementById('ng-icon').value='🎯';
+    document.getElementById('ng-color').value='#f59e0b';
+    document.getElementById('ng-name').value='';
+    document.getElementById('ng-cat').value='';
+    document.getElementById('ng-val').value=0;
+    document.getElementById('ng-saved').value=0;
+    document.getElementById('ng-years').value=3;
+    document.getElementById('ng-infl').value=6;
+    document.getElementById('ng-monthly').value=0;
+    document.getElementById('ng-priority').value=state.goals.length+1;
+    document.getElementById('ng-note').value='';
   }
-  charts['monthlyChart'] = new Chart(document.getElementById('monthlyChart'),{
-    type:'bar',
-    data:{labels:log.map(e=>e.month),datasets:[{label:'Saved',data:log.map(e=>e.saved),backgroundColor:'#f59e0b88',borderColor:'#f59e0b',borderWidth:1,borderRadius:4}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>fINR(ctx.raw)}}},scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#64748b',callback:(v)=>fINR(v)},grid:{color:'#2a2a3a'}}}}
-  });
+  openOverlay('goal-overlay');
 }
+function saveGoalModal(){
+  const obj={id:editingGoalId||Date.now(),icon:document.getElementById('ng-icon').value||'🎯',name:document.getElementById('ng-name').value||'New Goal',cat:document.getElementById('ng-cat').value||'General',color:document.getElementById('ng-color').value||'#f59e0b',todayVal:parseFloat(document.getElementById('ng-val').value)||0,saved:parseFloat(document.getElementById('ng-saved').value)||0,years:parseFloat(document.getElementById('ng-years').value)||1,inflRate:parseFloat(document.getElementById('ng-infl').value)||0,monthlyAmt:parseFloat(document.getElementById('ng-monthly').value)||0,priority:parseInt(document.getElementById('ng-priority').value)||99,note:document.getElementById('ng-note').value||''};
+  if(editingGoalId) state.goals=state.goals.map(g=>g.id===editingGoalId?obj:g);
+  else state.goals.push(obj);
+  closeOverlay('goal-overlay'); markUnsaved(); renderActive();
+}
+function deleteGoalFromModal(){ if(!editingGoalId||!confirm('Delete?'))return; state.goals=state.goals.filter(g=>g.id!==editingGoalId); closeOverlay('goal-overlay'); markUnsaved(); renderActive(); }
 
-// ============================
-// RENDER TIPS
-// ============================
-function renderTips(){
-  const c = computed();
-  const savRate = c.avail>0?(c.avail/c.takeHome*100):0;
-
-  // Snapshot
-  document.getElementById('snapshot-panel').innerHTML = `
-    <div class="panel-title">🧠 Your Financial Snapshot</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px">
-      ${[
-        {l:'Savings Rate',v:savRate.toFixed(0)+'%',n:savRate>40?'✅ Excellent':savRate>25?'⚠️ Good, aim for 40%+':'❌ Needs improvement',c:savRate>40?'var(--green)':savRate>25?'var(--accent)':'var(--red)'},
-        {l:'Emergency Fund',v:fINR(state.cashSavings),n:`Target: ${fINR(state.expenses*3)} (3mo expenses)`,c:state.cashSavings>=state.expenses*3?'var(--green)':'var(--red)'},
-        {l:'Debt Urgency',v:'High',n:'Clear ₹5-7L in 4yr max',c:'var(--red)'},
-        {l:'House Timeline',v:'Year 6-7',n:'Needs ₹1.5L+/mo salary by then',c:'var(--blue)'},
-        {l:'Monthly Saveable',v:fINR(c.avail),n:'After take-home - expenses',c:c.avail>30000?'var(--green)':'var(--orange)'},
-        {l:'Total Goals Gap',v:fINR(c.totalNeeded-c.totalCurrentSavings),n:'How much still to save',c:'var(--accent)'},
-      ].map(s=>`<div style="background:var(--bg3);border-radius:8px;padding:10px;border-left:3px solid ${s.c}">
-        <div style="font-size:9px;color:var(--t3)">${s.l}</div>
-        <div style="font-size:17px;font-weight:700;color:${s.c};font-family:'Syne',sans-serif">${s.v}</div>
-        <div style="font-size:10px;color:var(--t3);margin-top:2px">${s.n}</div>
-      </div>`).join('')}
-    </div>`;
-
-  // Phase tips
-  const phases=[
-    {phase:'Year 0–1 (Right Now)',icon:'⚡',color:'#f59e0b',tips:[
-      `Your take-home is ~${fINR(c.takeHome)}/mo. After ₹${fINR(state.expenses)} expenses, save ${fINR(c.avail)}/month minimum.`,
-      'First: Build emergency fund of ₹30k (3 months expenses) in a liquid FD or savings account.',
-      'Allocate ₹4,200/month for workstation — done in ~11 months. Buy after 12 months.',
-      'Put ₹12,000/month toward family debts — clears them in ~4 years. More = faster.',
-      'Start ₹5,000/month SIP in Nifty 50 index fund (PPFAS Flexi Cap or UTI Nifty 50) for house corpus.',
-      'Save ₹1,800/month for laptop, ₹1,300 for phone in a separate RD.',
-      "Don't touch mutual funds — ₹77k compounding at 12% = ₹2.7L in 10 years.",
-    ]},
-    {phase:'Year 1–3 (Momentum Phase)',icon:'📈',color:'#10b981',tips:[
-      'As salary hits 8 LPA (~₹53k take-home), redirect the extra ₹12k to house SIP.',
-      'Target: ₹15-18k/month into house corpus SIP by end of Year 3.',
-      'Clear workstation + laptop — divert freed-up ₹6k/month to house fund.',
-      'Medical expenses start in Year 3 (~₹7,700/month) — plan budget gap in advance.',
-      'Parents support starts Year 3 (~₹6,000/month) — start a dedicated RD from Year 2.',
-      'Keep salary increments conversation alive — target 20% hike per year. 9 LPA by Year 2 is realistic.',
-    ]},
-    {phase:'Year 3–6 (Debt-Free & Building)',icon:'🏗️',color:'#6366f1',tips:[
-      'By Year 4, debts should be cleared — redirect ₹12k to house fund immediately.',
-      'House SIP target: ₹22-25k/month to accumulate ₹44L+ by Year 6.5.',
-      'For home loan eligibility, banks allow 40-50% of take-home as EMI. Need ~₹1.8L/month income by Year 7.',
-      'Start renovation fund: ₹3k/month each for Gurgaon + Ludhiana.',
-      'Consider a Pre-Approved Home Loan from bank at Year 5 to lock in lower interest rates.',
-      'Salary by Year 6 target: 15-18 LPA (realistic with good performance/job switches).',
-    ]},
-    {phase:'Year 6–10 (Big Goals)',icon:'🚀',color:'#f97316',tips:[
-      'Purchase house: ₹44L+ savings + home loan ~₹1 Cr. Register in your name for long-term wealth.',
-      'Post-purchase: redirect house SIP to business corpus immediately.',
-      'Sports Business: Start small — 1 bowling machine + 2 nets first to test market, then scale.',
-      'Do Gurgaon renovation first (Year 7), Ludhiana next (Year 8) — stagger to manage cash flow.',
-      'By Year 10: aim for ₹50L+ business corpus alongside house ownership. That\'s real wealth.',
-      'Keep increasing parents support annually — set up a fixed transfer so it\'s automatic.',
-    ]},
-  ];
-  document.getElementById('tips-sections').innerHTML = phases.map(p=>`
-    <div class="tip-phase panel" style="border-color:${p.color}33;margin-bottom:14px">
-      <div style="font-family:'Syne',sans-serif;color:${p.color};font-size:14px;margin-bottom:12px">${p.icon} ${p.phase}</div>
-      ${p.tips.map(t=>`<div class="tip-item"><div class="tip-dot" style="background:${p.color}"></div><div class="tip-text">${t}</div></div>`).join('')}
-    </div>`).join('');
-
-  // Investment vehicles
-  document.getElementById('invest-table').innerHTML = [
-    {v:'Nifty 50 Index SIP',f:'House & business corpus (5yr+)',r:'11–13%',ri:'Medium',i:'📈'},
-    {v:'Liquid Mutual Fund',f:'Emergency fund & short-term goals',r:'6–7%',ri:'Very Low',i:'💧'},
-    {v:'PPF (₹1.5L/year)',f:'Long-term tax-free savings (section 80C)',r:'7.1%',ri:'Zero',i:'🛡️'},
-    {v:'Recurring Deposit',f:'Laptop, phone, workstation goals',r:'6–7%',ri:'None',i:'🏦'},
-    {v:'ELSS Mutual Fund',f:'Tax saving + wealth creation (80C)',r:'12–15%',ri:'Medium',i:'💹'},
-    {v:'NPS Tier 1 (optional)',f:'Retirement + extra ₹50k deduction',r:'9–10%',ri:'Medium',i:'🌅'},
-  ].map(v=>`
-    <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #1e2433;align-items:flex-start">
-      <span style="font-size:18px">${v.i}</span>
-      <div style="flex:1">
-        <div style="font-size:13px;font-weight:500;color:var(--t1)">${v.v}</div>
-        <div style="font-size:11px;color:var(--t3)">${v.f}</div>
+// SAVINGS
+function renderSavings(){
+  const sources=state.savingSources, total=sources.reduce((s,x)=>s+(x.amount||0),0);
+  document.getElementById('sources-list').innerHTML=(sources.length?sources.map(src=>`
+    <div class="source-card" style="border-left:3px solid ${src.color||'var(--green)'}">
+      <div class="source-icon">${src.icon}</div>
+      <div class="source-info"><div class="source-name">${src.name}</div><div class="source-sub">${src.note||''}</div></div>
+      <div class="source-amount" style="color:${src.color||'var(--green)'}">${fINR(src.amount||0)}</div>
+      <div class="source-inputs">
+        <div class="fi"><label>Amount (Rs.)</label><input type="number" value="${src.amount||0}" onchange="updateSourceAmt(${src.id},this.value)"></div>
+        <button class="btn-ghost" style="font-size:11px;padding:4px 10px;align-self:flex-end" onclick="openSourceModal(${src.id})">Edit</button>
+        <button class="btn-danger" style="align-self:flex-end" onclick="deleteSourceDirect(${src.id})">Delete</button>
       </div>
-      <div style="text-align:right;flex-shrink:0">
-        <div style="font-size:12px;color:var(--green);font-weight:600">${v.r}</div>
-        <div style="font-size:10px;color:var(--t3)">${v.ri} risk</div>
-      </div>
-    </div>`).join('');
-
-  // Tax tips
-  document.getElementById('tax-tips').innerHTML = [
-    {t:'Section 80C (₹1.5L limit)',d:'ELSS SIP + PPF + EPF contributions. Saves ₹15,000–46,800/year in tax.'},
-    {t:'Section 80D (Medical insurance)',d:'Premium for yourself = ₹25k deduction. Buy a ₹10L health policy (~₹8k/year) now.'},
-    {t:'HRA exemption',d:'Even though you live with parents, once you start paying them rent (with receipt), you can claim HRA.'},
-    {t:'Section 24(b) (Home loan interest)',d:'Once you take home loan, interest up to ₹2L/year is tax-deductible.'},
-    {t:'Section 80EEA (First-time buyer)',d:'Additional ₹1.5L deduction on home loan interest for first-time buyers.'},
-    {t:'NPS Section 80CCD(1B)',d:'Extra ₹50,000 deduction over 80C limit. Good for 30%+ tax bracket in future.'},
-  ].map(t=>`
-    <div style="margin-bottom:12px">
-      <div style="font-size:12px;font-weight:500;color:var(--accent);margin-bottom:2px">${t.t}</div>
-      <div style="font-size:11px;color:var(--t2);line-height:1.6">${t.d}</div>
-    </div>`).join('');
+    </div>`).join(''):'<div style="color:var(--t3);font-size:12px;padding:12px">No sources yet.</div>')+
+    `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-family:'Syne',sans-serif;font-weight:700">Total Savings</span><span style="font-size:22px;font-weight:700;font-family:'Syne',sans-serif;color:var(--green)">${fINR(total)}</span></div>`;
+  destroyChart('savingsChart');
+  if(sources.length) charts['savingsChart']=new Chart(document.getElementById('savingsChart'),{type:'doughnut',data:{labels:sources.map(s=>s.name),datasets:[{data:sources.map(s=>s.amount||0),backgroundColor:sources.map(s=>(s.color||'#10b981')+'cc'),borderColor:sources.map(s=>s.color||'#10b981'),borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{display:true,position:'bottom',labels:{color:'#94a3b8',font:{size:11},boxWidth:10}},tooltip:{callbacks:{label:(ctx)=>fINR(ctx.raw)+' ('+(total?((ctx.raw/total)*100).toFixed(1):0)+'%)'}}}}}); 
 }
-
-// ============================
-// INTERACTIONS
-// ============================
-function updateGoalSaved(id, val){
-  state.goals = state.goals.map(g=>g.id===id?{...g,saved:parseFloat(val)||0}:g);
-  markUnsaved(); renderActive();
+function updateSourceAmt(id,val){ state.savingSources=state.savingSources.map(s=>s.id===id?{...s,amount:parseFloat(val)||0}:s); markUnsaved(); renderSavings(); }
+function deleteSourceDirect(id){ if(!confirm('Remove this source?'))return; state.savingSources=state.savingSources.filter(s=>s.id!==id); markUnsaved(); renderSavings(); }
+function openSourceModal(id){
+  editingSourceId=id||null;
+  const src=id?state.savingSources.find(s=>s.id===id):null;
+  document.getElementById('source-modal-title').textContent=src?'Edit Source':'Add Savings Source';
+  document.getElementById('ns-save-btn').textContent=src?'Update Source':'Add Source';
+  document.getElementById('ns-delete-btn').style.display=src?'inline-block':'none';
+  document.getElementById('ns-icon').value=src?src.icon:'🏦';
+  document.getElementById('ns-color').value=src?src.color:'#10b981';
+  document.getElementById('ns-name').value=src?src.name:'';
+  document.getElementById('ns-amount').value=src?(src.amount||0):0;
+  document.getElementById('ns-note').value=src?(src.note||''):'';
+  openOverlay('source-overlay');
 }
-function updateGoalField(id, field, val){
-  state.goals = state.goals.map(g=>g.id===id?{...g,[field]:parseFloat(val)||0}:g);
-  markUnsaved(); renderActive();
+function saveSourceModal(){
+  const obj={id:editingSourceId||Date.now(),icon:document.getElementById('ns-icon').value||'🏦',name:document.getElementById('ns-name').value||'Savings',amount:parseFloat(document.getElementById('ns-amount').value)||0,note:document.getElementById('ns-note').value||'',color:document.getElementById('ns-color').value||'#10b981'};
+  if(editingSourceId) state.savingSources=state.savingSources.map(s=>s.id===editingSourceId?obj:s);
+  else state.savingSources.push(obj);
+  closeOverlay('source-overlay'); markUnsaved(); renderSavings();
 }
+function deleteSourceFromModal(){ if(!editingSourceId||!confirm('Delete?'))return; state.savingSources=state.savingSources.filter(s=>s.id!==editingSourceId); closeOverlay('source-overlay'); markUnsaved(); renderSavings(); }
 
+// MONTHLY
+function renderMonthly(){
+  const log=state.monthlyLog;
+  document.getElementById('log-empty').style.display=log.length?'none':'block';
+  document.getElementById('log-tbody').innerHTML=log.slice().reverse().map((e,i)=>`<tr><td style="font-weight:500;color:var(--t1)">${e.month||'—'}</td><td style="color:var(--green)">${e.income?fINR(e.income):'—'}</td><td style="color:var(--accent);font-weight:600">${fINR(e.saved)}</td><td>${e.income&&e.saved?Math.round(e.saved/e.income*100)+'%':'—'}</td><td>${e.where||'—'}</td><td>${e.note||'—'}</td><td><button class="btn-danger" onclick="deleteLog(${log.length-1-i})">X</button></td></tr>`).join('');
+  const total=log.reduce((s,e)=>s+(e.saved||0),0),avg=log.length?total/log.length:0,best=log.length?Math.max(...log.map(e=>e.saved||0)):0;
+  document.getElementById('log-summary').innerHTML=[{l:'Total Saved',v:fINR(total),c:'var(--accent)'},{l:'Monthly Avg',v:fINR(avg),c:'var(--green)'},{l:'Best Month',v:fINR(best),c:'var(--blue)'},{l:'Months Logged',v:log.length,c:'var(--t2)'}].map(s=>`<div><div style="font-size:10px;color:var(--t3)">${s.l}</div><div style="font-size:16px;color:${s.c};font-weight:700;font-family:'Syne',sans-serif">${s.v}</div></div>`).join('');
+  renderNotes(); renderMonthlyChart(); renderPhases();
+}
 function addLog(){
-  const month = document.getElementById('log-month').value;
-  const saved = parseFloat(document.getElementById('log-saved').value)||0;
-  if(!month||!saved) return alert('Enter at least month and saved amount.');
-  state.monthlyLog.push({
-    month, saved,
-    income: parseFloat(document.getElementById('log-income').value)||0,
-    where: document.getElementById('log-where').value,
-    note: document.getElementById('log-note').value,
-    date: new Date().toLocaleDateString('en-IN')
-  });
+  const month=document.getElementById('log-month').value,saved=parseFloat(document.getElementById('log-saved').value)||0;
+  if(!month||!saved){alert('Enter month and saved amount.');return;}
+  state.monthlyLog.push({month,saved,income:parseFloat(document.getElementById('log-income').value)||0,where:document.getElementById('log-where').value,note:document.getElementById('log-note').value,date:new Date().toLocaleDateString('en-IN')});
   ['log-month','log-saved','log-income','log-where','log-note'].forEach(id=>document.getElementById(id).value='');
   markUnsaved(); renderMonthly();
 }
-
-function deleteLog(i){
-  state.monthlyLog.splice(i,1);
-  markUnsaved(); renderMonthly();
+function deleteLog(i){ if(!confirm('Delete entry?'))return; state.monthlyLog.splice(i,1); markUnsaved(); renderMonthly(); }
+function renderNotes(){
+  document.getElementById('notes-list').innerHTML=state.notes.length?state.notes.slice().reverse().map((n,i)=>`<div class="note-item"><div class="ntxt">${n.text}</div><div style="display:flex;align-items:center;gap:6px"><span class="ndate">${n.date}</span><button class="btn-danger" onclick="deleteNote(${state.notes.length-1-i})">X</button></div></div>`).join(''):'<div style="color:var(--t3);font-size:12px">No notes yet.</div>';
+}
+function addNote(){ const txt=document.getElementById('note-input').value.trim(); if(!txt)return; state.notes.push({text:txt,date:new Date().toLocaleDateString('en-IN')}); document.getElementById('note-input').value=''; markUnsaved(); renderNotes(); }
+function deleteNote(i){ state.notes.splice(i,1); markUnsaved(); renderNotes(); }
+function renderMonthlyChart(){
+  destroyChart('monthlyChart');
+  const log=state.monthlyLog.slice(-12);
+  if(!log.length){charts['monthlyChart']=new Chart(document.getElementById('monthlyChart'),{type:'bar',data:{labels:['No data'],datasets:[{data:[0],backgroundColor:'#2a2a3a'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});return;}
+  charts['monthlyChart']=new Chart(document.getElementById('monthlyChart'),{type:'bar',data:{labels:log.map(e=>e.month),datasets:[{label:'Saved',data:log.map(e=>e.saved||0),backgroundColor:'#f59e0b88',borderColor:'#f59e0b',borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>fINR(ctx.raw)}}},scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#64748b',callback:(v)=>fINR(v)},grid:{color:'#2a2a3a'}}}}});
 }
 
-function addNote(){
-  const txt = document.getElementById('note-input').value.trim();
-  if(!txt) return;
-  state.notes.push({text:txt, date:new Date().toLocaleDateString('en-IN')});
-  document.getElementById('note-input').value='';
-  markUnsaved(); renderNotes();
+// PHASES
+function renderPhases(){
+  const c=computed(),container=document.getElementById('phases-container');
+  if(!state.phases.length){container.innerHTML='<div style="color:var(--t3);font-size:12px;padding:12px">No phases yet. Click + Add Phase to create one.</div>';return;}
+  container.innerHTML=state.phases.map(ph=>{
+    const total=ph.rows.reduce((s,r)=>s+(r.amt||0),0);
+    return `<div class="panel" style="border-left:3px solid ${ph.color||'var(--accent)'}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+        <div>
+          <input type="text" value="${ph.name}" onchange="updatePhaseField(${ph.id},'name',this.value)" style="background:transparent;border:none;border-bottom:1px dashed var(--border);border-radius:0;font-family:'Syne',sans-serif;font-size:14px;color:var(--t1);padding:2px 0;width:220px">
+          <div style="margin-top:4px"><input type="text" value="${ph.sub||''}" onchange="updatePhaseField(${ph.id},'sub',this.value)" placeholder="Subtitle..." style="background:transparent;border:none;border-bottom:1px dashed var(--border);border-radius:0;font-size:11px;color:var(--t3);padding:2px 0;width:240px"></div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input type="color" value="${ph.color||'#f59e0b'}" onchange="updatePhaseField(${ph.id},'color',this.value)" style="width:30px;height:30px;padding:2px;cursor:pointer;border-radius:6px;border:1px solid var(--border);background:var(--bg3)">
+          <button class="btn-primary" style="font-size:11px;padding:5px 12px" onclick="addPhaseRow(${ph.id})">+ Row</button>
+          <button class="btn-danger" onclick="deletePhase(${ph.id})">Delete</button>
+        </div>
+      </div>
+      ${ph.rows.map(r=>`<div class="phase-row">
+        <div style="flex:1;display:flex;gap:8px;flex-wrap:wrap">
+          <input type="text" value="${r.name}" onchange="updatePhaseRow(${ph.id},${r.id},'name',this.value)" style="width:140px">
+          <input type="text" value="${r.note||''}" onchange="updatePhaseRow(${ph.id},${r.id},'note',this.value)" placeholder="note..." style="width:110px;color:var(--t3)">
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input type="number" value="${r.amt||0}" onchange="updatePhaseRow(${ph.id},${r.id},'amt',this.value)">
+          <span style="font-weight:600;color:var(--green);min-width:56px;text-align:right;font-size:12px">${fINR(r.amt||0)}</span>
+          <button class="btn-danger" onclick="deletePhaseRow(${ph.id},${r.id})">X</button>
+        </div>
+      </div>`).join('')}
+      <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+        <span style="font-weight:600;font-size:13px">Total Allocated</span>
+        <div style="text-align:right">
+          <div style="font-size:17px;font-weight:700;font-family:'Syne',sans-serif;color:${ph.color||'var(--accent)'}">${fINR(total)}</div>
+          ${c.avail>0?`<div style="font-size:10px;color:${total<=c.avail?'var(--green)':'var(--red)'}">${total<=c.avail?'Within':'Over'} budget (${fINR(c.avail)} available)</div>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function addPhase(){ state.phases.push({id:Date.now(),name:'New Phase',sub:'',color:'#6366f1',rows:[]}); markUnsaved(); renderPhases(); }
+function deletePhase(id){ if(!confirm('Delete this phase?'))return; state.phases=state.phases.filter(p=>p.id!==id); markUnsaved(); renderPhases(); }
+function updatePhaseField(id,field,val){ state.phases=state.phases.map(p=>p.id===id?{...p,[field]:val}:p); markUnsaved(); }
+function addPhaseRow(phId){ const ph=state.phases.find(p=>p.id===phId); if(!ph)return; ph.rows.push({id:Date.now(),name:'New item',amt:0,note:''}); markUnsaved(); renderPhases(); }
+function updatePhaseRow(phId,rId,field,val){ const ph=state.phases.find(p=>p.id===phId); if(!ph)return; ph.rows=ph.rows.map(r=>r.id===rId?{...r,[field]:field==='amt'?parseFloat(val)||0:val}:r); markUnsaved(); renderPhases(); }
+function deletePhaseRow(phId,rId){ const ph=state.phases.find(p=>p.id===phId); if(!ph)return; ph.rows=ph.rows.filter(r=>r.id!==rId); markUnsaved(); renderPhases(); }
+
+// TIPS
+function renderTips(){
+  const c=computed(),savRate=c.takeHome>0?(c.avail/c.takeHome*100):0,totalTarget=c.goals.reduce((s,g)=>s+g.target,0);
+  document.getElementById('snapshot-panel').innerHTML=`<div class="panel-title">Your Financial Snapshot</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px">${[{l:'Savings Rate',v:savRate.toFixed(0)+'%',n:savRate>40?'Excellent!':savRate>25?'Good — aim 40%+':'Needs improvement',c:savRate>40?'var(--green)':savRate>25?'var(--accent)':'var(--red)'},{l:'Total Saved',v:fINR(c.totalSaved),n:'Across all sources',c:'var(--green)'},{l:'Goals Gap',v:fINR(Math.max(0,totalTarget-c.totalSaved)),n:'Still to accumulate',c:'var(--accent)'},{l:'Monthly Saveable',v:fINR(c.avail),n:'Take-home minus expenses',c:c.avail>=0?'var(--blue)':'var(--red)'},{l:'Goals Count',v:state.goals.length,n:'Active goals',c:'var(--purple)'},{l:'Sources Tracked',v:state.savingSources.length,n:'Saving buckets',c:'var(--teal)'}].map(s=>`<div style="background:var(--bg3);border-radius:8px;padding:10px;border-left:3px solid ${s.c}"><div style="font-size:9px;color:var(--t3)">${s.l}</div><div style="font-size:17px;font-weight:700;color:${s.c};font-family:'Syne',sans-serif">${s.v}</div><div style="font-size:10px;color:var(--t3);margin-top:2px">${s.n}</div></div>`).join('')}</div>`;
+  const phases=[
+    {phase:'Year 0-1 (Right Now)',icon:'⚡',color:'#f59e0b',tips:[`Your take-home is ${fINR(c.takeHome)}/month. After expenses you have ${fINR(c.avail)}/month to save.`,'Build emergency fund — 3 months expenses = '+fINR(state.expenses*3)+'. Keep in a liquid FD.','Start even a small SIP in a Nifty 50 index fund. Time in market beats timing.','Set goals in the Goals tab and split savings in the Plan section.','Log every month to stay accountable.']},
+    {phase:'Year 1-3 (Momentum)',icon:'📈',color:'#10b981',tips:['Every salary hike — increase SIP by at least 50% of the increment.','Target 20%+ year-on-year salary growth.','Review goals every 6 months and adjust timelines.','Get health insurance (Rs.10L cover) now — cheap while young, and tax deductible.','Increase parents support gradually as income grows.']},
+    {phase:'Year 3-6 (Building)',icon:'🏗️',color:'#6366f1',tips:['Build diversified portfolio: index funds 60% + debt/FD 30% + gold ETF 10%.','Clear all short-term goals — redirect those SIPs to bigger goals immediately.','For home loan: banks allow 40-50% of take-home as EMI.','Consider NPS Tier 1 for extra Rs.50,000 deduction.','Automate parents support transfer — make it non-negotiable.']},
+    {phase:'Year 6-10 (Major Goals)',icon:'🚀',color:'#f97316',tips:['Serious corpus should be built. Evaluate housing, business, or investment goals.','For any business: start small, test market, then scale.','Automate everything — SIPs, transfers, insurance. Remove willpower.','Keep emergency fund at 6 months of expenses as lifestyle grows.','Review milestones. This dashboard is your proof of discipline.']},
+  ];
+  document.getElementById('tips-sections').innerHTML=phases.map(p=>`<div class="tip-phase panel" style="border-color:${p.color}33"><div style="font-family:'Syne',sans-serif;color:${p.color};font-size:14px;margin-bottom:12px">${p.icon} ${p.phase}</div>${p.tips.map(t=>`<div class="tip-item"><div class="tip-dot" style="background:${p.color}"></div><div class="tip-text">${t}</div></div>`).join('')}</div>`).join('');
+  document.getElementById('invest-table').innerHTML=[{i:'📈',v:'Nifty 50 Index SIP',f:'Long-term corpus (5yr+)',r:'11-13%',ri:'Medium'},{i:'💧',v:'Liquid Mutual Fund',f:'Emergency fund and short-term goals',r:'6-7%',ri:'Very Low'},{i:'🛡️',v:'PPF (Rs.1.5L/year)',f:'Tax-free savings, 80C benefit',r:'7.1%',ri:'Zero'},{i:'🏦',v:'Recurring Deposit',f:'Short goals (1-3 years)',r:'6-7%',ri:'None'},{i:'💹',v:'ELSS Mutual Fund',f:'Tax saving + growth (80C)',r:'12-15%',ri:'Medium'},{i:'🌅',v:'NPS Tier 1',f:'Retirement + Rs.50k extra deduction',r:'9-10%',ri:'Medium'}].map(v=>`<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #1e2433;align-items:flex-start"><span style="font-size:18px">${v.i}</span><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--t1)">${v.v}</div><div style="font-size:11px;color:var(--t3)">${v.f}</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:12px;color:var(--green);font-weight:600">${v.r}</div><div style="font-size:10px;color:var(--t3)">${v.ri} risk</div></div></div>`).join('');
+  document.getElementById('tax-tips').innerHTML=[{t:'Section 80C (Rs.1.5L limit)',d:'ELSS SIP + PPF + EPF. Saves Rs.15,000-46,800/year in tax.'},{t:'Section 80D — Health Insurance',d:'Premium for yourself = Rs.25k deduction. Buy a Rs.10L policy now (around Rs.8k/year).'},{t:'HRA Exemption',d:'If you pay rent to parents with a proper receipt, claim HRA to reduce taxable income.'},{t:'Section 24(b) — Home Loan Interest',d:'Interest up to Rs.2L/year is deductible once you take a home loan.'},{t:'Section 80EEA — First-time Buyer',d:'Extra Rs.1.5L deduction on home loan interest for first-time buyers.'},{t:'NPS Section 80CCD(1B)',d:'Rs.50,000 extra deduction beyond 80C. Very useful at the 30% tax bracket.'}].map(t=>`<div style="margin-bottom:12px"><div style="font-size:12px;font-weight:500;color:var(--accent);margin-bottom:2px">${t.t}</div><div style="font-size:11px;color:var(--t2);line-height:1.6">${t.d}</div></div>`).join('');
 }
 
-function deleteNote(i){
-  state.notes.splice(i,1);
-  markUnsaved(); renderNotes();
+// SETTINGS MODAL
+function openSettingsModal(){
+  document.getElementById('m-title').value=state.appTitle||'Your Budget Dashboard';
+  document.getElementById('m-inf-gen').value=state.infGen;
+  document.getElementById('m-inf-re').value=state.infRE;
+  document.getElementById('m-inf-med').value=state.infMed;
+  document.getElementById('m-sip-ret').value=state.sipRet;
+  openOverlay('settings-overlay');
 }
-
-// ============================
-// MODAL
-// ============================
-function openModal(){
-  document.getElementById('m-name').value = state.name||'Kartik';
-  document.getElementById('m-inf-gen').value = state.infGen;
-  document.getElementById('m-inf-re').value = state.infRE;
-  document.getElementById('m-inf-med').value = state.infMed;
-  document.getElementById('m-sip-ret').value = state.sipRet;
-  document.getElementById('m-house-price').value = state.housePrice;
-  document.getElementById('m-furnish').value = state.furnishing;
-  document.getElementById('modal-overlay').classList.add('open');
-}
-function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
 function applySettings(){
-  state.infGen = +document.getElementById('m-inf-gen').value||6;
-  state.infRE = +document.getElementById('m-inf-re').value||8;
-  state.infMed = +document.getElementById('m-inf-med').value||7;
-  state.sipRet = +document.getElementById('m-sip-ret').value||10;
-  state.housePrice = +document.getElementById('m-house-price').value||7500000;
-  state.furnishing = +document.getElementById('m-furnish').value||800000;
-  closeModal(); markUnsaved(); renderActive();
+  const title=document.getElementById('m-title').value||'Your Budget Dashboard';
+  state.appTitle=title; state.infGen=+document.getElementById('m-inf-gen').value||6; state.infRE=+document.getElementById('m-inf-re').value||8; state.infMed=+document.getElementById('m-inf-med').value||7; state.sipRet=+document.getElementById('m-sip-ret').value||10;
+  document.getElementById('app-title').textContent=title; document.title=title;
+  closeOverlay('settings-overlay'); markUnsaved(); renderActive();
 }
 
-// ============================
-// UTILS
-// ============================
-function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
+// RENAME
+function renameApp(){ const n=prompt('Dashboard title:',state.appTitle); if(n&&n.trim()){state.appTitle=n.trim(); document.getElementById('app-title').textContent=state.appTitle; document.title=state.appTitle; markUnsaved();} }
 
-let activeTab = 'overview';
-function renderActive(){
-  if(activeTab==='overview') renderOverview();
-  else if(activeTab==='goals') renderGoals();
-  else if(activeTab==='monthly') renderMonthly();
-  else if(activeTab==='tips') renderTips();
+// DOWNLOAD — bakes current data into the file so opening it anywhere restores your data
+function downloadDashboard(){
+  const saved=JSON.stringify(state);
+  const html=document.documentElement.outerHTML;
+  const script=`<script>(function(){try{localStorage.setItem('${APP_KEY}',${JSON.stringify(saved)});}catch(e){}})()</s`+`cript>`;
+  const out=html.replace('</head>',script+'</head>');
+  const blob=new Blob([out],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  const d=new Date();
+  a.download='budget-'+d.getDate()+'-'+(d.getMonth()+1)+'-'+d.getFullYear()+'.html';
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
-// Override switchTab to track active
-const origSwitch = window.switchTab;
-window.switchTab = function(name){
-  activeTab = name;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
-  event.target.classList.add('active');
-  renderTab(name);
-};
-
-function renderTab(name){
-  activeTab = name;
-  if(name==='overview') renderOverview();
-  else if(name==='goals') renderGoals();
-  else if(name==='monthly') renderMonthly();
-  else if(name==='tips') renderTips();
-}
-
-// ============================
 // INIT
-// ============================
-document.getElementById('header-date').textContent =
-  'Your 10-year financial roadmap · ' + new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
-
-syncSettingsBar();
-const initC = computed();
-document.getElementById('avail-disp').textContent = fINR(initC.avail);
-
-// Auto-save every 3 min
-setInterval(saveAll, 180000);
-
-// Initial render
-renderOverview();
-renderTips(); // precompute tips silently
-setTimeout(()=>{ document.getElementById('tab-tips').classList.remove('active'); }, 10);
-
-// Ctrl+S shortcut
-document.addEventListener('keydown', e=>{ if(e.ctrlKey&&e.key==='s'){e.preventDefault();saveAll();}});
+(function(){
+  const d=new Date();
+  document.getElementById('header-date').textContent='Your personal financial roadmap · '+d.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('app-title').textContent=state.appTitle||'Your Budget Dashboard';
+  document.title=state.appTitle||'Your Budget Dashboard';
+  syncBar();
+  renderOverview();
+})();
 </script>
 </body>
 </html>
