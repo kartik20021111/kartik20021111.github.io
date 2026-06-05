@@ -45,7 +45,7 @@ Job boards feel impersonal. A resume tells you *what* I did. A portfolio shows y
 
 If you're an HR, L&D, or People Analytics professional thinking about building your own — feel free to use this as reference. Happy to walk you through it.
 
-📩 Connect with me on [LinkedIn](https://linkedin.com/in/kartik-sharma-841629166)
+📩 Connect with me on [LinkedIn](https://www.linkedin.com/in/kartik-sharma-841629166/)
 
 ---
 
